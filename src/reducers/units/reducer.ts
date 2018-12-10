@@ -1,4 +1,4 @@
-export type IUnitsState = IUnit[];
+export type IState = IUnit[];
 
 /**
  * The measurement units are hardcoded and never change.
@@ -7,7 +7,7 @@ export default function (state = initialState) {
     return state;
 };
 
-const initialState: IUnitsState = [
+const initialState: IState = [
     {name: 'Singular', singular: ' x ', plural: ' x '},
     {name: 'Grams', singular: 'g ', plural: 'g '},
     {name: 'Millilitres', singular: 'ml ', plural: 'ml '},

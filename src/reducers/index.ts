@@ -1,10 +1,13 @@
 import { combineReducers } from 'redux';
-import unitsReducer, { IUnitsState } from './units/reducer';
+import errorsReducer, { IState as IErrorsState } from './errors/reducer';
+import unitsReducer, { IState as IUnitsState } from './units/reducer';
 
 export default combineReducers({
+    errors: errorsReducer,
     units: unitsReducer
 });
 
 export interface IGlobalState {
+    errors: IErrorsState
     units: IUnitsState
 }

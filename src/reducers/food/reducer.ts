@@ -14,10 +14,11 @@ export interface IState {
 export default function (state = initialState, action: Action) {
     switch (action.type) {
         case ActionNames.UPDATE_ITEMS:
+            const updates = {};
             action.items.map(item => {
-                state[item.id] = item;
+                updates[item.id] = item;
             });
-            return state;
+            return Object.assign({}, state, updates);
         default:
             return state;
     }

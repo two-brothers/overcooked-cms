@@ -13,8 +13,8 @@ import { connect } from 'react-redux';
 
 import { IGlobalState } from '../../reducers';
 import { IState as IFoodState } from '../../reducers/food/reducer';
-import FoodItem from '../foodItem/FoodItem';
-import NewFood from '../newFood/NewFood';
+import FoodItem from './FoodItem';
+import NewFood from './NewFood';
 
 /**
  * A class to display and interact with all food items

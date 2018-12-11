@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IPagedFood } from './interfaces';
+import { IFood, INewFood, IPagedFood } from './interfaces';
 
 /**
  * A class to interact with the Overcooked backend server.
@@ -13,9 +13,19 @@ class Server {
      * @param page the index of the page to retrieve
      */
     public static getFoodPage(page: number): Promise<IPagedFood> {
-        return axios(`${Server.baseUrl}/food/at/${String(page)}`)
-            .then(res => res.data.data)
+        return axios.get(`${Server.baseUrl}/food/at/${String(page)}`)
+            .then(res => res.data.data);
     }
+
+    /**
+     * Sends the specified food item to the server for creation
+     * @param item the food item to be created
+     */
+    public static createFood(item: INewFood): Promise<IFood> {
+        return axios.post(`${Server.baseUrl}/food`, item)
+            .then(res => res.data.data);
+    }
+
 
     private static baseUrl: string = process.env.NODE_ENV === 'production' ?
         'https://overcooked.2brothers.tech' :

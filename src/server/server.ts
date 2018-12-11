@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IFood, INewFood, IPagedFood } from './interfaces';
+import { IFood, INewFood, INewRecipe, IPagedFood, IRecipe } from './interfaces';
 
 /**
  * A class to interact with the Overcooked backend server.
@@ -33,6 +33,15 @@ class Server {
     public static deleteFood(id: string): Promise<undefined> {
         return axios.delete(`${Server.baseUrl}/food/${id}`)
             .then(() => undefined);
+    }
+
+    /**
+     * Sends the specified recipe to the server for creation
+     * @param item the recipe item to be created
+     */
+    public static createRecipe(item: INewRecipe): Promise<IRecipe> {
+        return axios.post(`${Server.baseUrl}/recipes`, item)
+            .then(res => res.data.data);
     }
 
     private static baseUrl: string = process.env.NODE_ENV === 'production' ?

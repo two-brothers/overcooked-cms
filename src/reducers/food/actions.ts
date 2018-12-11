@@ -5,7 +5,7 @@ import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
 import { IGlobalState } from '../index';
-import { ActionNames, AddItem, UpdateItems } from './action.types';
+import { ActionNames, AddItem, RemoveItem, UpdateItems } from './action.types';
 import { IState } from './reducer';
 
 /**
@@ -41,14 +41,28 @@ function initFoodPage(page = 0, dispatch: Dispatch<UpdateItems | AddError>, getS
 
 /**
  * Send the item to the server for creation, and dispatch ADD_ITEM when the new record is returned.
- * @param item the new food item. This function does not validate the structure of the item
  * Dispatch an error for any unexpected server response.
+ * @param item the new food item. This function does not validate the structure of the item
  */
 export const createFood = (item: INewFood) => (dispatch: Dispatch<AddItem | AddError>) =>
     Server.createFood(item)
         .then(res => dispatch({
             item: res,
             type: ActionNames.ADD_ITEM
+        }))
+        .catch(err => recordError(err)(dispatch))
+        .then(() => undefined);
+
+/**
+ * Request that the specified food item be deleted from the server, and dispatch REMOVE_ITEM if successful.
+ * Dispatch an error for any unexpected server response
+ * @param id the id of the food item to be deleted
+ */
+export const deleteFood = (id: string) => (dispatch: Dispatch<RemoveItem | AddError>) =>
+    Server.deleteFood(id)
+        .then(() => dispatch({
+            id,
+            type: ActionNames.REMOVE_ITEM
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

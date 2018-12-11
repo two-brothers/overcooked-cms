@@ -26,6 +26,14 @@ class Server {
             .then(res => res.data.data);
     }
 
+    /**
+     * Requests that the specified food item be deleted from the server
+     * @param id the id of the food item to delete
+     */
+    public static deleteFood(id: string): Promise<undefined> {
+        return axios.delete(`${Server.baseUrl}/food/${id}`)
+            .then(() => undefined);
+    }
 
     private static baseUrl: string = process.env.NODE_ENV === 'production' ?
         'https://overcooked.2brothers.tech' :

@@ -22,6 +22,7 @@ class FoodItem extends Component<IProps> {
                     this.props.food.conversions
                         .map(conversion => this.displayConversion(conversion))
                 }</TableCell>
+                <TableCell/>
             </TableRow>
         );
     }

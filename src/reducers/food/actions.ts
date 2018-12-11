@@ -1,15 +1,17 @@
 import { Dispatch } from 'redux';
 
+import { INewFood } from '../../server/interfaces';
 import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
 import { IGlobalState } from '../index';
-import { ActionNames, UpdateItems } from './action.types';
+import { ActionNames, AddItem, UpdateItems } from './action.types';
 import { IState } from './reducer';
 
 /**
  * Retrieve all the food items, one page at a time, and dispatch UPDATE_ITEMS as each page is retrieved.
  * If any of the retrieved items are already in the database, dispatch an error (and do not update the affected items).
+ * Dispatch an error for any unexpected server response.
  */
 export const initFood = () => (dispatch: Dispatch<UpdateItems | AddError>, getState: () => IGlobalState) =>
     initFoodPage(0, dispatch, getState);
@@ -33,5 +35,20 @@ function initFoodPage(page = 0, dispatch: Dispatch<UpdateItems | AddError>, getS
                 res.last_page ? Promise.resolve(undefined) : initFoodPage(page + 1, dispatch, getState)
             ]);
         })
+        .catch(err => recordError(err)(dispatch))
         .then(() => undefined);
 }
+
+/**
+ * Send the item to the server for creation, and dispatch ADD_ITEM when the new record is returned.
+ * @param item the new food item. This function does not validate the structure of the item
+ * Dispatch an error for any unexpected server response.
+ */
+export const createFood = (item: INewFood) => (dispatch: Dispatch<AddItem | AddError>) =>
+    Server.createFood(item)
+        .then(res => dispatch({
+            item: res,
+            type: ActionNames.ADD_ITEM
+        }))
+        .catch(err => recordError(err)(dispatch))
+        .then(() => undefined);

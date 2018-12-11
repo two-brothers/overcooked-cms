@@ -1,16 +1,18 @@
-
 export interface IPagedFood {
     food: IFood[];
     last_page: boolean;
 }
 
-export interface IFood {
-    id: string;
+export interface INewFood {
     name: {
         singular: string;
         plural: string;
     }
-    conversions: IUnitConversion[]
+    conversions: IUnitConversion[];
+}
+
+export type IFood = INewFood & {
+    id: string;
 }
 
 interface IUnitConversion {

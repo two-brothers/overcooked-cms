@@ -8,8 +8,16 @@ export type UpdateItems = BaseAction<ActionNames.UPDATE_ITEMS> & {
     items: IFood[];
 };
 
-export type Action = UpdateItems;
+/**
+ * Add a new food item to the state
+ */
+export type AddItem = BaseAction<ActionNames.ADD_ITEM> & {
+    item: IFood;
+}
+
+export type Action = UpdateItems | AddItem;
 
 export enum ActionNames {
-    UPDATE_ITEMS  = 'UPDATE_FOOD_ITEMS'
+    UPDATE_ITEMS = 'UPDATE_FOOD_ITEMS',
+    ADD_ITEM = 'ADD_FOOD_ITEM'
 }

@@ -97,20 +97,21 @@ class NewFood extends Component<IProps> {
      * Update the state whenever the checkbox corresponding to the selection of the specified unit is toggled
      * @param id the unit id
      */
-    private toggleCheckbox = (id: number) => () => {
-        const newSelections = this.state.unitSelections.slice();
-        newSelections[id].selected = !newSelections[id].selected;
-        this.setState({unitSelections: newSelections});
-    };
+    private toggleCheckbox = (id: number) => () => this.setState((state: IState) => {
+        const newSelections = state.unitSelections.slice();
+        newSelections[id] = Object.assign({}, newSelections[id], {selected: !newSelections[id].selected});
+        return {unitSelections: newSelections};
+    });
     /**
      * Update the state whenever the quantity corresponding the the specified unit is changed
      * @param id the unit id
      */
-    private onQuantityChange = (id: number) => (e: ChangeEvent<HTMLInputElement>) => {
-        const newSelections = this.state.unitSelections.slice();
-        newSelections[id].quantity = Number(e.target.value);
+    private onQuantityChange = (id: number) => (e: ChangeEvent<HTMLInputElement>) => this.setState((state: IState) => {
+        const newSelections = state.unitSelections.slice();
+        newSelections[id] = Object.assign({}, newSelections[id], {quantity: Number(e.target.value)});
         this.setState({unitSelections: newSelections});
-    };
+    });
+
     /**
      * A utility function to return the string '<measurement symbol> <item description>'
      * Specifically, use the singular forms if the quantity is 1 and the plural forms otherwise

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { initFood } from '../reducers/food/actions';
-import NewFood from './newFood/NewFood';
+import DisplayFood from './displayFood/DisplayFood';
 
 /**
  * A wrapper for the UI components.
@@ -21,7 +21,7 @@ class Container extends Component<IProps> {
     public render(): JSX.Element {
         return (
             <div>
-                <NewFood/>
+                <DisplayFood/>
             </div>
         );
     };

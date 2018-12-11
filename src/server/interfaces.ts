@@ -15,7 +15,7 @@ export type IFood = INewFood & {
     id: string;
 }
 
-interface IUnitConversion {
+export interface IUnitConversion {
     unit_id: number;
     ratio: number;
 }

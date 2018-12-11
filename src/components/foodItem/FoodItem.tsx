@@ -1,10 +1,13 @@
+import Fab from '@material-ui/core/Fab';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '../../reducers';
+import { deleteFood } from '../../reducers/food/actions';
 import { IState as IUnit } from '../../reducers/units/reducer';
 import { IFood, IUnitConversion } from '../../server/interfaces';
 
@@ -22,7 +25,9 @@ class FoodItem extends Component<IProps> {
                     this.props.food.conversions
                         .map(conversion => this.displayConversion(conversion))
                 }</TableCell>
-                <TableCell/>
+                <TableCell>
+                    <Fab size={'small'} onClick={this.remove}><DeleteIcon/></Fab>
+                </TableCell>
             </TableRow>
         );
     }
@@ -39,15 +44,23 @@ class FoodItem extends Component<IProps> {
             <span key={conversion.unit_id}>{conversion.ratio} {conversion.ratio === 1 ? singular : plural}<br/></span>
         );
     };
+
+    /**
+     * Remove this food item from the server
+     */
+    private remove = () => {
+        this.props.deleteFood(this.props.food.id);
+    };
 }
 
 interface IProps {
     food: IFood;
-    units: IUnit
+    units: IUnit;
+    deleteFood: (id: string) => Promise<undefined>;
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
     units: state.units
 });
 
-export default connect(mapStateToProps)(FoodItem);
+export default connect(mapStateToProps, {deleteFood})(FoodItem);

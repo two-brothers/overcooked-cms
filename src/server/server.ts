@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IFood, INewFood, INewRecipe, IPagedFood, IRecipe } from './interfaces';
+import { IFood, INewFood, INewRecipe, IPagedFood, IPagedRecipes, IRecipe } from './interfaces';
 
 /**
  * A class to interact with the Overcooked backend server.
@@ -35,6 +35,16 @@ class Server {
     public static deleteFood(id: string): Promise<void> {
         return axios.delete(`${Server.baseUrl}/food/${id}`)
             .then(() => undefined)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
+    /**
+     * Retrieves the recipe records at the specified page.
+     * @param page the index of the page to retrieve
+     */
+    public static getRecipePage(page: number): Promise<IPagedRecipes> {
+        return axios.get(`${Server.baseUrl}/recipes/at/${String(page)}`)
+            .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
 

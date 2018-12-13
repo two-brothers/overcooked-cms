@@ -20,6 +20,11 @@ export interface IUnitConversion {
     ratio: number;
 }
 
+export interface IPagedRecipes {
+    recipes: IRecipe[];
+    last_page: boolean;
+}
+
 export interface INewRecipe {
     title: string;
     serves?: number;

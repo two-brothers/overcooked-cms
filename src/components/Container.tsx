@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { initFood } from './../reducers/food/actions';
+import { initFood } from '../reducers/food/actions';
+import { initRecipes } from '../reducers/recipe/actions';
 import DisplayFood from './displayFood/DisplayFood';
-import NewRecipe from './displayRecipe/NewRecipe';
+import DisplayRecipes from './displayRecipe/DisplayRecipes';
 
 /**
  * A wrapper for the UI components.
@@ -16,14 +17,15 @@ import NewRecipe from './displayRecipe/NewRecipe';
  */
 class Container extends Component<IProps> {
     public componentDidMount(): void {
+        this.props.initRecipes();
         this.props.initFood();
     }
 
     public render(): JSX.Element {
         return (
             <div>
+                <DisplayRecipes/>
                 <DisplayFood/>
-                <NewRecipe/>
             </div>
         );
     };
@@ -31,6 +33,7 @@ class Container extends Component<IProps> {
 
 interface IProps {
     initFood: () => Promise<undefined>;
+    initRecipes: () => Promise<undefined>;
 }
 
-export default connect(null, {initFood})(Container);
+export default connect(null, {initFood, initRecipes})(Container);

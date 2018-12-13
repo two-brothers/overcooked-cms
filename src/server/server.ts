@@ -58,6 +58,16 @@ class Server {
             .catch(Server.useOriginalErrorMessage);
     }
 
+    /**
+     * Requests that the specified recipe be deleted from the server
+     * @param id the id of the recipe to delete
+     */
+    public static deleteRecipe(id: string): Promise<void> {
+        return axios.delete(`${Server.baseUrl}/recipes/${id}`)
+            .then(() => undefined)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
     private static baseUrl: string = process.env.NODE_ENV === 'production' ?
         'https://overcooked.2brothers.tech' :
         'http://localhost:4000';

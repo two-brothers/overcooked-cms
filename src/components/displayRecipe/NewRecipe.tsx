@@ -16,7 +16,7 @@ import { IGlobalState } from '../../reducers';
 import { createRecipe } from '../../reducers/recipe/actions';
 import { IState as IUnits } from '../../reducers/units/reducer';
 import { IFood, IIngredient, INewRecipe } from '../../server/interfaces';
-import Utility from '../utility';
+import Utility from '../utility'
 
 class NewRecipe extends Component<IProps> {
     public state: IState = {
@@ -34,6 +34,15 @@ class NewRecipe extends Component<IProps> {
         title: ''
     };
 
+    /**
+     * All recipes must have at least one ingredient section and at least one method step
+     * Add them when the component loads
+     */
+    public componentDidMount(): void {
+        this.appendNewIngredientSection();
+        this.appendNewStep();
+    }
+
     public render(): JSX.Element {
         return (
             <div>
@@ -48,7 +57,7 @@ class NewRecipe extends Component<IProps> {
                     <div>{this.renderInput('cook time (mins)', this.onInputChange('cook_time', Number), 'number', true, 1)}</div>
                     <div>
                         <h4>Ingredients</h4>
-                        <Fab size={'small'} onClick={this.newIngredientSection}><AddIcon/></Fab>
+                        <Fab size={'small'} onClick={this.appendNewIngredientSection}><AddIcon/></Fab>
                         <FormControl> {
                             this.state.ingredient.sections.map(
                                 (section, sectionIdx) => this.renderIngredientSection(sectionIdx)
@@ -57,11 +66,12 @@ class NewRecipe extends Component<IProps> {
                     </div>
                     <div>
                         <h4>Method</h4>
-                        <Fab size={'small'} onClick={this.newStep}><AddIcon/></Fab>
+                        <Fab size={'small'} onClick={this.appendNewStep}><AddIcon/></Fab>
                         {this.state.method.steps.map((step, idx) => (
                             <div key={step.key}>
                                 {this.renderInput(`Step ${idx}`, this.onInputChange('method', String, `steps[${idx}].instruction`))}
-                                <Fab size={'small'} onClick={this.removeStep(idx)}><DeleteIcon/></Fab>
+                                <Fab size={'small'} onClick={this.removeStep(idx)}
+                                     disabled={this.state.method.steps.length === 1}><DeleteIcon/></Fab>
                             </div>
                         ))}
                     </div>
@@ -97,9 +107,10 @@ class NewRecipe extends Component<IProps> {
         const section: IKeyedIngredientSection = this.state.ingredient.sections[sectionIdx];
         return (
             <div key={section.key}>
-                <Fab size={'small'} onClick={this.removeIngredientSection(sectionIdx)}><DeleteIcon/></Fab>
+                <Fab size={'small'} onClick={this.removeIngredientSection(sectionIdx)}
+                     disabled={this.state.ingredient.sections.length === 1}><DeleteIcon/></Fab>
                 {this.renderInput('heading (optional)', this.onInputChange('ingredient', String, `sections[${sectionIdx}].heading`), 'string', false)}
-                <Fab size={'small'} onClick={this.newIngredient(sectionIdx)}><AddIcon/></Fab>
+                <Fab size={'small'} onClick={this.appendNewIngredient(sectionIdx)}><AddIcon/></Fab>
                 {section.ingredients.map((ingredient, ingIdx) => this.renderIngredient(sectionIdx, ingIdx))}
             </div>
         );
@@ -120,7 +131,7 @@ class NewRecipe extends Component<IProps> {
                             onChange={this.handleIngredientSelection}>{
                         // create a menu item for every unit used by every food item
                         this.props.food.map(item => item.conversions.map((_, idx) => ({item, idx})))
-                            .reduce((a, b) => a.concat(b))
+                            .reduce((a, b) => a.concat(b), [])
                             .map(({item, idx}) => (
                                 // the value contains all the context needed to update the state, including
                                 // the section idx, ingredient idx, food id and unit_id
@@ -131,7 +142,8 @@ class NewRecipe extends Component<IProps> {
                                 }</MenuItem>
                             ))
                     }</Select>
-                    <Fab size={'small'} onClick={this.removeIngredient(sectionIdx, ingIdx)}><DeleteIcon/></Fab>
+                    <Fab size={'small'} onClick={this.removeIngredient(sectionIdx, ingIdx)}
+                         disabled={this.state.ingredient.sections[sectionIdx].ingredients.length === 1}><DeleteIcon/></Fab>
                 </FormControl>
             </div>
         );
@@ -209,10 +221,10 @@ class NewRecipe extends Component<IProps> {
     /**
      * Add a new empty ingredient section at the end of the list
      */
-    private newIngredientSection = () => this.setState((state: IState) => ({
+    private appendNewIngredientSection = () => this.setState((state: IState) => ({
         ingredient: Utility.appendToNestedArray<IKeyedIngredientSection>(state.ingredient, 'sections', {
             heading: undefined,
-            ingredients: [],
+            ingredients: [this.newIngredient()],
             key: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
         })
     }));
@@ -231,16 +243,21 @@ class NewRecipe extends Component<IProps> {
      * Add a new ingredient to the specified section
      * @param sectionIdx
      */
-    private newIngredient = (sectionIdx: number) => () => this.setState((state: IState) => ({
+    private appendNewIngredient = (sectionIdx: number) => () => this.setState((state: IState) => ({
         ingredient: Utility.appendToNestedArray<IKeyedIngredient>(
-            state.ingredient, `sections[${sectionIdx}].ingredients`, {
-                amount: 1,
-                food_id: '',
-                key: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-                unit_id: 0
-            }
+            state.ingredient, `sections[${sectionIdx}].ingredients`, this.newIngredient()
         )
     }));
+
+    /**
+     * Return an empty ingredient
+     */
+    private newIngredient = () => ({
+        amount: 1,
+        food_id: '',
+        key: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+        unit_id: 0
+    });
 
     /**
      * Remove the specified ingredient
@@ -256,7 +273,7 @@ class NewRecipe extends Component<IProps> {
     /**
      * Add a new empty step at the end of the method
      */
-    private newStep = () => this.setState((state: IState) => ({
+    private appendNewStep = () => this.setState((state: IState) => ({
         method: Utility.appendToNestedArray<IKeyedStep>(state.method, 'steps', {
             instruction: '',
             key: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)

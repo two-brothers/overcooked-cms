@@ -16,8 +16,8 @@ import { IState } from './reducer';
 export const initFood = () => (dispatch: Dispatch<UpdateItems | AddError>, getState: () => IGlobalState) =>
     initFoodPage(0, dispatch, getState);
 
-function initFoodPage(page = 0, dispatch: Dispatch<UpdateItems | AddError>, getState: () => IGlobalState): Promise<undefined> {
-    return Server.getFoodPage(page)
+const initFoodPage = (page: number, dispatch: Dispatch<UpdateItems | AddError>, getState: () => IGlobalState): Promise<undefined> =>
+    Server.getFoodPage(page)
         .then(res => {
             const state: IState = getState().food;
             const newFoods = res.food.filter(f => state[f.id] === undefined);
@@ -37,7 +37,6 @@ function initFoodPage(page = 0, dispatch: Dispatch<UpdateItems | AddError>, getS
         })
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);
-}
 
 /**
  * Send the item to the server for creation, and dispatch ADD_ITEM when the new record is returned.

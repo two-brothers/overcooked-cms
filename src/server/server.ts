@@ -14,7 +14,8 @@ class Server {
      */
     public static getFoodPage(page: number): Promise<IPagedFood> {
         return axios.get(`${Server.baseUrl}/food/at/${String(page)}`)
-            .then(res => res.data.data);
+            .then(res => res.data.data)
+            .catch(Server.useOriginalErrorMessage);
     }
 
     /**
@@ -23,16 +24,18 @@ class Server {
      */
     public static createFood(item: INewFood): Promise<IFood> {
         return axios.post(`${Server.baseUrl}/food`, item)
-            .then(res => res.data.data);
+            .then(res => res.data.data)
+            .catch(Server.useOriginalErrorMessage);
     }
 
     /**
      * Requests that the specified food item be deleted from the server
      * @param id the id of the food item to delete
      */
-    public static deleteFood(id: string): Promise<undefined> {
+    public static deleteFood(id: string): Promise<void> {
         return axios.delete(`${Server.baseUrl}/food/${id}`)
-            .then(() => undefined);
+            .then(() => undefined)
+            .catch(Server.useOriginalErrorMessage);
     }
 
     /**
@@ -41,12 +44,33 @@ class Server {
      */
     public static createRecipe(item: INewRecipe): Promise<IRecipe> {
         return axios.post(`${Server.baseUrl}/recipes`, item)
-            .then(res => res.data.data);
+            .then(res => res.data.data)
+            .catch(Server.useOriginalErrorMessage);
     }
 
     private static baseUrl: string = process.env.NODE_ENV === 'production' ?
         'https://overcooked.2brothers.tech' :
         'http://localhost:4000';
+
+    /**
+     * The Overcooked-API server provides more useful error messages than the generic axios one.
+     * Use that error message if it exists
+     * @param err the original server error wrapped in the axios error.
+     */
+    private static useOriginalErrorMessage(err: IOvercookedError) {
+        if (err.response && err.response.data && err.response.data.error) {
+            throw new Error(err.response.data.error);
+        }
+        throw err;
+    };
+}
+
+interface IOvercookedError extends Error {
+    response: {
+        data: {
+            error: string
+        };
+    }
 }
 
 export default Server;

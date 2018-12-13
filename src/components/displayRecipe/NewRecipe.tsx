@@ -16,7 +16,7 @@ import { IGlobalState } from '../../reducers';
 import { createRecipe } from '../../reducers/recipe/actions';
 import { IState as IUnits } from '../../reducers/units/reducer';
 import { IFood, IIngredient, INewRecipe } from '../../server/interfaces';
-import Utility from '../utility'
+import Utility from '../utility';
 
 class NewRecipe extends Component<IProps> {
     public state: IState = {
@@ -76,7 +76,7 @@ class NewRecipe extends Component<IProps> {
                         ))}
                     </div>
                     <div>{this.renderInput('reference url', this.onInputChange('reference', String))}</div>
-                    <Button type={'submit'}>Create</Button>
+                    <Button type={'submit'} disabled={!this.valid()}>Create</Button>
                 </form>
             </div>
         );
@@ -181,6 +181,22 @@ class NewRecipe extends Component<IProps> {
             [this.state.servesSelected ? 'serves' : 'makes']: this.state.produces
         });
     };
+
+    /**
+     * Confirm that all properties are valid
+     */
+    private valid = () =>
+        this.state.title.length > 0 &&
+        this.state.produces > 0 &&
+        this.state.prep_time > 0 &&
+        this.state.cook_time > 0 &&
+        this.state.ingredient.sections.map(section =>
+            section.ingredients.map(ing => ing.amount > 0 && ing.food_id.length > 0)
+                .reduce((a, b) => a && b, true) // the section is valid if all ingredients are valid
+        ).reduce((a, b) => a && b, true) && // all sections are valid
+        this.state.method.steps.map(step => step.instruction.length > 0)
+            .reduce((a, b) => a && b, true) && // all steps are valid
+        this.state.reference.length > 0;
 
     /**
      * Whenever an ingredient is selected, update the corresponding food_id and unit_id properties in the state
@@ -301,8 +317,6 @@ class NewRecipe extends Component<IProps> {
         quantity === 1 ?
             `${this.props.units[unitId].singular} ${food.name.singular}` :
             `${this.props.units[unitId].plural} ${food.name.plural}`;
-
-
 }
 
 interface IProps {

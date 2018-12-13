@@ -38,7 +38,7 @@ export type IRecipe = INewRecipe & {
 
 export interface IIngredientSection {
     heading?: string;
-    ingredients: IIngredient;
+    ingredients: IIngredient[];
 }
 
 export interface IIngredient {

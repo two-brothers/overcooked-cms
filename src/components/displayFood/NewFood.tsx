@@ -129,16 +129,12 @@ class NewFood extends Component<IProps> {
      */
     private isInvalidUnit = (unit: IUnitSelection) => unit.selected && unit.quantity === 0;
     /**
-     * Confirm that at least one unit is selected, and all selections are valid
-     */
-    private isValidSelection = () =>
-        this.state.unitSelections.filter(unit => unit.selected).length > 0 &&
-        this.state.unitSelections.filter(unit => this.isInvalidUnit(unit)).length === 0;
-    /**
      * Confirm that all form items are specified and valid. This is used to prevent submission of an invalid form.
      */
-    private valid = () => this.state.singular && this.state.plural && this.isValidSelection();
-
+    private valid = () => this.state.singular &&
+        this.state.plural &&
+        this.state.unitSelections.filter(unit => unit.selected).length > 0 &&
+        this.state.unitSelections.filter(unit => this.isInvalidUnit(unit)).length === 0;
 
 }
 

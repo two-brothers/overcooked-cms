@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { initFood } from '../reducers/food/actions';
+import { initFood } from './../reducers/food/actions';
 import DisplayFood from './displayFood/DisplayFood';
+import NewRecipe from './displayRecipe/NewRecipe';
 
 /**
  * A wrapper for the UI components.
@@ -22,6 +23,7 @@ class Container extends Component<IProps> {
         return (
             <div>
                 <DisplayFood/>
+                <NewRecipe/>
             </div>
         );
     };

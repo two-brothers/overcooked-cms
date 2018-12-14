@@ -26,4 +26,21 @@ export class Utility {
 
         return a === b;
     }
+
+    /**
+     * Return an object equivalent to the subtrahend "subtracted" from the minuend.
+     * In other words, return a duplicate of the minuend object and remove all of the first-level properties that
+     * are deeply equal to the corresponding first-level property on the subtrahend object.
+     * @param minuend the object to be duplicated and filtered
+     * @param subtrahend the object to subtract from the minuend
+     */
+    public static subtract(minuend: object, subtrahend: object) {
+        const diff = Object.assign({}, minuend);
+        Object.getOwnPropertyNames(minuend).map(prop => {
+            if (Utility.isDeeplyEqual(minuend[prop], subtrahend[prop])) {
+                delete diff[prop];
+            }
+        });
+        return diff;
+    }
 }

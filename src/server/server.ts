@@ -70,6 +70,17 @@ class Server {
     }
 
     /**
+     * Sends the partial recipe to the server to update the specified recipe
+     * @param id the id of the recipe to update
+     * @param update the partial recipe with the updated values
+     */
+    public static updateRecipe(id: string, update: Partial<INewRecipe>): Promise<IRecipe> {
+        return axios.put(`${Server.baseUrl}/recipes/${id}`, update)
+            .then(res => res.data.data)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
+    /**
      * Requests that the specified recipe be deleted from the server
      * @param id the id of the recipe to delete
      */

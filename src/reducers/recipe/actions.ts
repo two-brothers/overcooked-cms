@@ -3,7 +3,7 @@ import { INewRecipe } from '../../server/interfaces';
 import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
-import { ActionNames, AddItems, RemoveItem } from './action.types';
+import { ActionNames, AddItems, RemoveItem, UpdateItem } from './action.types';
 
 /**
  * Retrieve all the recipe items, one page at a time, and dispatch ADD_ITEMS as each page is retrieved.
@@ -51,6 +51,22 @@ export const deleteRecipe = (id: string) => (dispatch: Dispatch<RemoveItem | Add
         .then(() => dispatch({
             id,
             type: ActionNames.REMOVE_ITEM
+        }))
+        .catch(err => recordError(err)(dispatch))
+        .then(() => undefined);
+
+/**
+ * Request that the specified recipe be updated with the specified values, and dispatch UPDATE_ITEM if successful.
+ * Dispatch an error for any unexpected server response
+ * @param id the id of the recipe to be updated
+ * @param update the new properties to apply to the recipe
+ */
+export const updateRecipe = (id: string, update: Partial<INewRecipe>) => (dispatch: Dispatch<UpdateItem | AddError>) =>
+    Server.updateRecipe(id, update)
+        .then(() => dispatch({
+            id,
+            type: ActionNames.UPDATE_ITEM,
+            update
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

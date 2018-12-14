@@ -1,5 +1,5 @@
 import { Action as BaseAction } from 'redux';
-import { IRecipe } from '../../server/interfaces';
+import { INewRecipe, IRecipe } from '../../server/interfaces';
 
 /**
  * Add new recipes to the state
@@ -15,9 +15,18 @@ export type RemoveItem = BaseAction<ActionNames.REMOVE_ITEM> & {
     id: string;
 }
 
-export type Action = AddItems | RemoveItem;
+/**
+ * Update individual properties of an existing recipe in the state
+ */
+export type UpdateItem = BaseAction<ActionNames.UPDATE_ITEM> & {
+    id: string;
+    update: Partial<INewRecipe>;
+}
+
+export type Action = AddItems | RemoveItem | UpdateItem;
 
 export enum ActionNames {
     ADD_ITEMS = 'ADD_RECIPES',
-    REMOVE_ITEM = 'REMOVE_RECIPE'
+    REMOVE_ITEM = 'REMOVE_RECIPE',
+    UPDATE_ITEM = 'UPDATE_RECIPE'
 }

@@ -29,6 +29,17 @@ class Server {
     }
 
     /**
+     * Sends the partial food item to the server to update the specified item
+     * @param id the id of the food item to update
+     * @param update the partial food item with the updated values
+     */
+    public static updateFood(id: string, update: Partial<INewFood>): Promise<IFood> {
+        return axios.put(`${Server.baseUrl}/food/${id}`, update)
+            .then(res => res.data.data)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
+    /**
      * Requests that the specified food item be deleted from the server
      * @param id the id of the food item to delete
      */

@@ -16,7 +16,7 @@ import { IGlobalState } from '../../reducers';
 import { createRecipe } from '../../reducers/recipe/actions';
 import { IState as IUnits } from '../../reducers/units/reducer';
 import { IFood, IIngredient, INewRecipe } from '../../server/interfaces';
-import Utility from '../utility';
+import NestedUtility from '../nestedUtility';
 
 class NewRecipe extends Component<IProps> {
     public state: IState = {
@@ -208,8 +208,8 @@ class NewRecipe extends Component<IProps> {
         const foodId: string = e.target.value[2];
         const unitId: number = Number(e.target.value[3]);
         const path = `sections[${sectionIdx}].ingredients[${ingIdx}]`;
-        this.setState((state: IState) => ({ingredient: Utility.replaceField<string>(state.ingredient, `${path}.food_id`, foodId)}));
-        this.setState((state: IState) => ({ingredient: Utility.replaceField<number>(state.ingredient, `${path}.unit_id`, unitId)}));
+        this.setState((state: IState) => ({ingredient: NestedUtility.replaceField<string>(state.ingredient, `${path}.food_id`, foodId)}));
+        this.setState((state: IState) => ({ingredient: NestedUtility.replaceField<number>(state.ingredient, `${path}.unit_id`, unitId)}));
     };
 
     /**
@@ -224,7 +224,7 @@ class NewRecipe extends Component<IProps> {
             this.setState((state: IState) => {
                 return subpath === undefined ?
                     {[property]: value} :
-                    {[property]: Utility.replaceField<string | number>(state[property], subpath, value)};
+                    {[property]: NestedUtility.replaceField<string | number>(state[property], subpath, value)};
             });
         };
 
@@ -238,7 +238,7 @@ class NewRecipe extends Component<IProps> {
      * Add a new empty ingredient section at the end of the list
      */
     private appendNewIngredientSection = () => this.setState((state: IState) => ({
-        ingredient: Utility.appendToNestedArray<IKeyedIngredientSection>(state.ingredient, 'sections', {
+        ingredient: NestedUtility.appendToNestedArray<IKeyedIngredientSection>(state.ingredient, 'sections', {
             heading: undefined,
             ingredients: [this.newIngredient()],
             key: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
@@ -251,7 +251,7 @@ class NewRecipe extends Component<IProps> {
      */
     private removeIngredientSection = (idx: number) => () => {
         this.setState((state: IState) => ({
-            ingredient: Utility.removeFromNestedArray<IKeyedIngredientSection>(state.ingredient, 'sections', idx)
+            ingredient: NestedUtility.removeFromNestedArray<IKeyedIngredientSection>(state.ingredient, 'sections', idx)
         }));
     };
 
@@ -260,7 +260,7 @@ class NewRecipe extends Component<IProps> {
      * @param sectionIdx
      */
     private appendNewIngredient = (sectionIdx: number) => () => this.setState((state: IState) => ({
-        ingredient: Utility.appendToNestedArray<IKeyedIngredient>(
+        ingredient: NestedUtility.appendToNestedArray<IKeyedIngredient>(
             state.ingredient, `sections[${sectionIdx}].ingredients`, this.newIngredient()
         )
     }));
@@ -282,7 +282,7 @@ class NewRecipe extends Component<IProps> {
      */
     private removeIngredient = (sectionIdx: number, ingIdx: number) => () => {
         this.setState((state: IState) => ({
-            ingredient: Utility.removeFromNestedArray<IKeyedIngredient>(state.ingredient, `sections[${sectionIdx}].ingredients`, ingIdx)
+            ingredient: NestedUtility.removeFromNestedArray<IKeyedIngredient>(state.ingredient, `sections[${sectionIdx}].ingredients`, ingIdx)
         }));
     };
 
@@ -290,7 +290,7 @@ class NewRecipe extends Component<IProps> {
      * Add a new empty step at the end of the method
      */
     private appendNewStep = () => this.setState((state: IState) => ({
-        method: Utility.appendToNestedArray<IKeyedStep>(state.method, 'steps', {
+        method: NestedUtility.appendToNestedArray<IKeyedStep>(state.method, 'steps', {
             instruction: '',
             key: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
         })
@@ -302,7 +302,7 @@ class NewRecipe extends Component<IProps> {
      */
     private removeStep = (idx: number) => () => {
         this.setState((state: IState) => ({
-            method: Utility.removeFromNestedArray<IKeyedStep>(state.method, 'steps', idx)
+            method: NestedUtility.removeFromNestedArray<IKeyedStep>(state.method, 'steps', idx)
         }));
     };
 

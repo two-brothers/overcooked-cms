@@ -14,10 +14,10 @@ import { connect } from 'react-redux';
 import { IGlobalState } from '../../reducers';
 import { IState as IUnits } from '../../reducers/units/reducer';
 import { IFood, INewFood } from '../../server/interfaces';
-import Utility from '../utility';
+import NestedUtility from '../nestedUtility';
 
 interface IPassedProps {
-    // the (optional) initial food item to modify
+    // the (optional) food item to modify
     item?: IFood
     // the value written on the submit button
     action: string;
@@ -145,7 +145,7 @@ class DescribeFood extends Component<IProps> {
      * @param id the unit id
      */
     private toggleCheckbox = (id: number) => () => this.setState((state: IState) => ({
-        unit: Utility.toggleNested(state.unit, `selections[${id}].selected`)
+        unit: NestedUtility.toggleNested(state.unit, `selections[${id}].selected`)
     }));
 
     /**
@@ -154,7 +154,7 @@ class DescribeFood extends Component<IProps> {
      */
     private onQuantityChange = (id: number) => (e: ChangeEvent<HTMLInputElement>) => {
         const value: number = Number(e.target.value); // cache the result before React's Synthetic Handler clears it
-        this.setState((state: IState) => ({unit: Utility.replaceField<number>(state.unit, `selections[${id}].quantity`, value)}));
+        this.setState((state: IState) => ({unit: NestedUtility.replaceField<number>(state.unit, `selections[${id}].quantity`, value)}));
     };
 
     /**

@@ -3,7 +3,7 @@ import { INewRecipe } from '../../server/interfaces';
 import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
-import { ActionNames, AddItem, AddItems, RemoveItem } from './action.types';
+import { ActionNames, AddItems, RemoveItem } from './action.types';
 
 /**
  * Retrieve all the recipe items, one page at a time, and dispatch ADD_ITEMS as each page is retrieved.
@@ -32,11 +32,11 @@ const initRecipePage = (page: number, dispatch: Dispatch<AddItems | AddError>): 
  * Dispatch an error for any unexpected server response.
  * @param item the new recipe item. This function does not validate the structure of the recipe
  */
-export const createRecipe = (item: INewRecipe) => (dispatch: Dispatch<AddItem | AddError>) =>
+export const createRecipe = (item: INewRecipe) => (dispatch: Dispatch<AddItems | AddError>) =>
     Server.createRecipe(item)
         .then(res => dispatch({
-            item: res,
-            type: ActionNames.ADD_ITEM
+            items: [res],
+            type: ActionNames.ADD_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

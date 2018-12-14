@@ -5,7 +5,6 @@ export type IState = IRecipe[];
 
 /**
  * Handle the recipe actions as follows
- *  - ADD_ITEM: append a single new recipe to the state
  *  - ADD_ITEMS: append all new recipes to the state
  *  - REMOVE_ITEM: remove the specified recipe from the state, if it exists
  * @param state the list of recipes before the action is applied
@@ -14,11 +13,6 @@ export type IState = IRecipe[];
  */
 export default function (state = initialState, action: Action) {
     switch (action.type) {
-        case ActionNames.ADD_ITEM:
-            return [
-                ...state,
-                action.item
-            ];
         case ActionNames.ADD_ITEMS:
             return [
                 ...state,

@@ -5,7 +5,7 @@ import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
 import { IGlobalState } from '../index';
-import { ActionNames, RemoveItem, ReplaceItems } from './action.types';
+import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types';
 import { IState } from './reducer';
 
 /**
@@ -62,6 +62,22 @@ export const deleteFood = (id: string) => (dispatch: Dispatch<RemoveItem | AddEr
         .then(() => dispatch({
             id,
             type: ActionNames.REMOVE_ITEM
+        }))
+        .catch(err => recordError(err)(dispatch))
+        .then(() => undefined);
+
+/**
+ * Request that the specified food item be updated with the specified value, and dispatch UPDATE_ITEM if successful.
+ * Dispatch an error for any unexpected server response
+ * @param id the id of the food item to be updated
+ * @param update the new properties to apply to the food item
+ */
+export const updateFood = (id: string, update: Partial<INewFood>) => (dispatch: Dispatch<UpdateItem | AddError>) =>
+    Server.updateFood(id, update)
+        .then(() => dispatch({
+            id,
+            type: ActionNames.UPDATE_ITEM,
+            update
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

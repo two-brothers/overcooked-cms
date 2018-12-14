@@ -1,4 +1,5 @@
 class NestedUtility {
+
     /**
      * A function to duplicate an object, while replacing the specified field
      * This behaves like Object.assign but can handle nested fields
@@ -43,6 +44,29 @@ class NestedUtility {
         return NestedUtility.applyToNestedValue(toggleFn, object, path);
     }
 
+    /**
+     * A function to retrieve a nested parameter from an object, given a string representation of the path
+     * @param object the outer object
+     * @param path the (. delimited) path to the property
+     */
+    public static retrieveFromPath(object: object, path?: string): any {
+        if (!path) {
+            return object;
+        }
+
+        const fields = path.split('.');
+        const child = fields[0];
+        const nestedFields = fields.slice(1).join('.');
+        const arrayParams = NestedUtility.arrayRegex.exec(child);
+
+        if (arrayParams) {
+            const property = arrayParams[1];
+            const idx = Number(arrayParams[2]);
+            return NestedUtility.retrieveFromPath(object[property][idx], nestedFields);
+        }
+
+        return NestedUtility.retrieveFromPath(object[child], nestedFields);
+    }
 
     private static arrayRegex: RegExp = /^([a-zA-Z0-9_]+)\[(\d+)]$/;
 
@@ -56,7 +80,7 @@ class NestedUtility {
         const fields = path.split('.');
         const child = fields[0];
         const nestedFields = fields.slice(1).join('.');
-        const arrayParams = NestedUtility.arrayRegex.exec(fields[0]);
+        const arrayParams = NestedUtility.arrayRegex.exec(child);
 
         if (arrayParams) {
             const property = arrayParams[1];

@@ -13,10 +13,12 @@ import { connect } from 'react-redux';
 
 import { IGlobalState } from '../../reducers';
 import { IState as IUnits } from '../../reducers/units/reducer';
-import { INewFood } from '../../server/interfaces';
+import { IFood, INewFood } from '../../server/interfaces';
 import Utility from '../utility';
 
 interface IPassedProps {
+    // the (optional) initial food item to modify
+    item?: IFood
     // the value written on the submit button
     action: string;
     // the function to call on submit
@@ -30,7 +32,7 @@ interface IPassedProps {
  * or alternatively, to modify an existing one.
  */
 class DescribeFood extends Component<IProps> {
-    public state: IState = {
+    public state: IState = this.props.item ? this.initState(this.props.item) : {
         plural: '',
         singular: '',
         unit: {
@@ -68,6 +70,26 @@ class DescribeFood extends Component<IProps> {
                 </div>
             </form>
         );
+    }
+
+    /**
+     * Initialise the component state to match the passed in food item
+     * @param item the item to emulate
+     */
+    private initState(item: IFood): IState {
+        const selections = this.props.units.map(() => ({
+            quantity: 1,
+            selected: false
+        }));
+        item.conversions.map(conversion => {
+            selections[conversion.unit_id].selected = true;
+            selections[conversion.unit_id].quantity = conversion.ratio;
+        });
+        return {
+            plural: item.name.plural,
+            singular: item.name.singular,
+            unit: {selections}
+        };
     }
 
     /**

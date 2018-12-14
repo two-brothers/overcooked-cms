@@ -1,5 +1,5 @@
 import { Action as BaseAction } from 'redux';
-import { IFood } from '../../server/interfaces';
+import { IFood, INewFood } from '../../server/interfaces';
 
 /**
  * Add new food items to the state, and replace existing ones with the updated value
@@ -15,9 +15,18 @@ export type RemoveItem = BaseAction<ActionNames.REMOVE_ITEM> & {
     id: string;
 }
 
-export type Action = ReplaceItems | RemoveItem;
+/**
+ * Update individual properties of an existing food item in the state
+ */
+export type UpdateItem = BaseAction<ActionNames.UPDATE_ITEM> & {
+    id: string;
+    update: Partial<INewFood>;
+}
+
+export type Action = ReplaceItems | RemoveItem | UpdateItem;
 
 export enum ActionNames {
     REPLACE_ITEMS = 'REPLACE_FOOD_ITEMS',
-    REMOVE_ITEM = 'REMOVE_FOOD_ITEM'
+    REMOVE_ITEM = 'REMOVE_FOOD_ITEM',
+    UPDATE_ITEM = 'UPDATE_FOOD_ITEM'
 }

@@ -29,9 +29,20 @@ class Utility {
      * @param idx the index of the element to remove from the array
      */
     public static removeFromNestedArray<T>(object: object, path: string, idx: number): any {
-        const removeFn = (element: T[]) => [...element.slice(0, idx), ...element.slice(idx+1)];
+        const removeFn = (element: T[]) => [...element.slice(0, idx), ...element.slice(idx + 1)];
         return Utility.applyToNestedValue(removeFn, object, path);
     }
+
+    /**
+     * A function to duplicate an object, while toggling a nested boolean (without mutating the original object)
+     * @param object the object to duplicate
+     * @param path the (. delimited) path to the boolean
+     */
+    public static toggleNested(object: object, path: string): any {
+        const toggleFn = (element: boolean) => !element;
+        return Utility.applyToNestedValue(toggleFn, object, path);
+    }
+
 
     private static arrayRegex: RegExp = /^([a-zA-Z0-9_]+)\[(\d+)]$/;
 

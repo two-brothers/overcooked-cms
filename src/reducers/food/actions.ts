@@ -5,7 +5,7 @@ import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
 import { IGlobalState } from '../index';
-import { ActionNames, RemoveItem, UpdateItems } from './action.types';
+import { ActionNames, RemoveItem, ReplaceItems } from './action.types';
 import { IState } from './reducer';
 
 /**
@@ -13,10 +13,10 @@ import { IState } from './reducer';
  * If any of the retrieved items are already in the database, dispatch an error (and do not update the affected items).
  * Dispatch an error for any unexpected server response.
  */
-export const initFood = () => (dispatch: Dispatch<UpdateItems | AddError>, getState: () => IGlobalState) =>
+export const initFood = () => (dispatch: Dispatch<ReplaceItems | AddError>, getState: () => IGlobalState) =>
     initFoodPage(0, dispatch, getState);
 
-const initFoodPage = (page: number, dispatch: Dispatch<UpdateItems | AddError>, getState: () => IGlobalState): Promise<undefined> =>
+const initFoodPage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>, getState: () => IGlobalState): Promise<undefined> =>
     Server.getFoodPage(page)
         .then(res => {
             const state: IState = getState().food;
@@ -25,7 +25,7 @@ const initFoodPage = (page: number, dispatch: Dispatch<UpdateItems | AddError>, 
 
             dispatch({
                 items: newFoods,
-                type: ActionNames.UPDATE_ITEMS
+                type: ActionNames.REPLACE_ITEMS
             });
 
             return Promise.all([
@@ -43,11 +43,11 @@ const initFoodPage = (page: number, dispatch: Dispatch<UpdateItems | AddError>, 
  * Dispatch an error for any unexpected server response.
  * @param item the new food item. This function does not validate the structure of the item
  */
-export const createFood = (item: INewFood) => (dispatch: Dispatch<UpdateItems | AddError>) =>
+export const createFood = (item: INewFood) => (dispatch: Dispatch<ReplaceItems | AddError>) =>
     Server.createFood(item)
         .then(res => dispatch({
             items: [res],
-            type: ActionNames.UPDATE_ITEMS
+            type: ActionNames.REPLACE_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

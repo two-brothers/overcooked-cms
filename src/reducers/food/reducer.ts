@@ -7,7 +7,7 @@ export interface IState {
 
 /**
  * Handle the food actions as follows
- *  - UPDATE_ITEMS:  add new food items to the state,  overwriting existing ones with the same IDs
+ *  - REPLACE_ITEMS:  add new food items to the state, overwriting existing ones with the same IDs
  *  - REMOVE_ITEM: remove the food item from the state, if it exists
  * @param state the state before the action is applied
  * @param action the action to apply
@@ -15,7 +15,7 @@ export interface IState {
  */
 export default function (state = initialState, action: Action) {
     switch (action.type) {
-        case ActionNames.UPDATE_ITEMS:
+        case ActionNames.REPLACE_ITEMS:
             const updates = {};
             action.items.map(item => {
                 updates[item.id] = item;

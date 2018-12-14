@@ -9,23 +9,15 @@ export type UpdateItems = BaseAction<ActionNames.UPDATE_ITEMS> & {
 };
 
 /**
- * Add a new food item to the state
- */
-export type AddItem = BaseAction<ActionNames.ADD_ITEM> & {
-    item: IFood;
-}
-
-/**
  * Remove a food item from the state
  */
 export type RemoveItem = BaseAction<ActionNames.REMOVE_ITEM> & {
     id: string;
 }
 
-export type Action = UpdateItems | AddItem | RemoveItem;
+export type Action = UpdateItems | RemoveItem;
 
 export enum ActionNames {
     UPDATE_ITEMS = 'UPDATE_FOOD_ITEMS',
-    ADD_ITEM = 'ADD_FOOD_ITEM',
     REMOVE_ITEM = 'REMOVE_FOOD_ITEM'
 }

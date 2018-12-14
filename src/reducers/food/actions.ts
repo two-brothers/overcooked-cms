@@ -5,7 +5,7 @@ import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
 import { IGlobalState } from '../index';
-import { ActionNames, AddItem, RemoveItem, UpdateItems } from './action.types';
+import { ActionNames, RemoveItem, UpdateItems } from './action.types';
 import { IState } from './reducer';
 
 /**
@@ -39,15 +39,15 @@ const initFoodPage = (page: number, dispatch: Dispatch<UpdateItems | AddError>, 
         .then(() => undefined);
 
 /**
- * Send the item to the server for creation, and dispatch ADD_ITEM when the new record is returned.
+ * Send the item to the server for creation, and dispatch UPDATE_ITEMS when the new record is returned.
  * Dispatch an error for any unexpected server response.
  * @param item the new food item. This function does not validate the structure of the item
  */
-export const createFood = (item: INewFood) => (dispatch: Dispatch<AddItem | AddError>) =>
+export const createFood = (item: INewFood) => (dispatch: Dispatch<UpdateItems | AddError>) =>
     Server.createFood(item)
         .then(res => dispatch({
-            item: res,
-            type: ActionNames.ADD_ITEM
+            items: [res],
+            type: ActionNames.UPDATE_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

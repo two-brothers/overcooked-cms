@@ -31,6 +31,7 @@ export interface INewRecipe {
     makes?: number;
     prep_time: number;
     cook_time: number;
+    image_url: string;
     ingredient_sections: IIngredientSection[];
     method: string[];
     reference_url: string;

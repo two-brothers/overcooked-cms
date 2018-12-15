@@ -34,6 +34,7 @@ interface IPassedProps {
 class DescribeRecipe extends Component<IProps> {
     public state: IState = this.props.recipe ? this.initState(this.props.recipe) : {
         cook_time: 0,
+        image_url: '',
         ingredient: {
             sections: []
         },
@@ -68,8 +69,8 @@ class DescribeRecipe extends Component<IProps> {
                     {this.renderInput(this.state.servesSelected ? 'serves' : 'makes', 'produces', undefined, 'number', true, 1)}
                     <Switch checked={this.state.servesSelected} onChange={this.toggleProduces}/>
                 </div>
-                <div>{this.renderInput('preparation time (mins)','prep_time', undefined, 'number', true, 1)}</div>
-                <div>{this.renderInput('cook time (mins)','cook_time', undefined, 'number', true, 1)}</div>
+                <div>{this.renderInput('preparation time (mins)', 'prep_time', undefined, 'number', true, 1)}</div>
+                <div>{this.renderInput('cook time (mins)', 'cook_time', undefined, 'number', true, 1)}</div>
                 <div>
                     <h4>Ingredients</h4>
                     <Fab size={'small'} onClick={this.appendNewIngredientSection}><AddIcon/></Fab>
@@ -84,18 +85,18 @@ class DescribeRecipe extends Component<IProps> {
                     <Fab size={'small'} onClick={this.appendNewStep}><AddIcon/></Fab>
                     {this.state.method.steps.map((step, idx) => (
                         <div key={step.key}>
-                            {this.renderInput(`Step ${idx}`,'method', `steps[${idx}].instruction`)}
+                            {this.renderInput(`Step ${idx}`, 'method', `steps[${idx}].instruction`)}
                             <Fab size={'small'} onClick={this.removeStep(idx)}
                                  disabled={this.state.method.steps.length === 1}><DeleteIcon/></Fab>
                         </div>
                     ))}
                 </div>
                 <div>{this.renderInput('reference url', 'reference')}</div>
+                <div>{this.renderInput('image url', 'image_url')}</div>
                 <Button type={'submit'} disabled={!this.valid()}>{this.props.action}</Button>
             </form>
         );
     }
-
 
 
     /**
@@ -187,6 +188,7 @@ class DescribeRecipe extends Component<IProps> {
     private initState(recipe: IRecipe): IState {
         return {
             cook_time: recipe.cook_time,
+            image_url: recipe.image_url,
             ingredient: {
                 sections: recipe.ingredient_sections.map(section => ({
                     heading: section.heading,
@@ -218,6 +220,7 @@ class DescribeRecipe extends Component<IProps> {
         e.preventDefault();
         this.props.apply({
             cook_time: this.state.cook_time,
+            image_url: this.state.image_url,
             ingredient_sections: this.state.ingredient.sections.map(keyedSection => ({
                 ...(keyedSection.heading ? {heading: keyedSection.heading} : {}),
                 ingredients: keyedSection.ingredients.map(ing => ({
@@ -357,7 +360,8 @@ class DescribeRecipe extends Component<IProps> {
         ).reduce((a, b) => a && b, true) && // all sections are valid
         this.state.method.steps.map(step => step.instruction.length > 0)
             .reduce((a, b) => a && b, true) && // all steps are valid
-        this.state.reference.length > 0;
+        this.state.reference.length > 0 &&
+        this.state.image_url.length > 0;
 
     /**
      * Display a human readable description of the food in the specified units
@@ -393,6 +397,7 @@ type IKeyedStep = IKeyedProperty & {
 
 interface IState {
     cook_time: number;
+    image_url: string;
     ingredient: {
         sections: IKeyedIngredientSection[];
     }

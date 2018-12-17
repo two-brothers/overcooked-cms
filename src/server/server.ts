@@ -13,7 +13,7 @@ class Server {
      * @param page the index of the page to retrieve
      */
     public static getFoodPage(page: number): Promise<IPagedFood> {
-        return axios.get(`${Server.baseUrl}/food/at/${String(page)}`)
+        return axios.get(`/food/at/${String(page)}`)
             .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
@@ -23,7 +23,7 @@ class Server {
      * @param item the food item to be created
      */
     public static createFood(item: INewFood): Promise<IFood> {
-        return axios.post(`${Server.baseUrl}/food`, item)
+        return axios.post(`/food`, item)
             .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
@@ -34,7 +34,7 @@ class Server {
      * @param update the partial food item with the updated values
      */
     public static updateFood(id: string, update: Partial<INewFood>): Promise<IFood> {
-        return axios.put(`${Server.baseUrl}/food/${id}`, update)
+        return axios.put(`/food/${id}`, update)
             .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
@@ -44,7 +44,7 @@ class Server {
      * @param id the id of the food item to delete
      */
     public static deleteFood(id: string): Promise<void> {
-        return axios.delete(`${Server.baseUrl}/food/${id}`)
+        return axios.delete(`/food/${id}`)
             .then(() => undefined)
             .catch(Server.useOriginalErrorMessage);
     }
@@ -54,7 +54,7 @@ class Server {
      * @param page the index of the page to retrieve
      */
     public static getRecipePage(page: number): Promise<IPagedRecipes> {
-        return axios.get(`${Server.baseUrl}/recipes/at/${String(page)}`)
+        return axios.get(`/recipes/at/${String(page)}`)
             .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
@@ -64,7 +64,7 @@ class Server {
      * @param item the recipe item to be created
      */
     public static createRecipe(item: INewRecipe): Promise<IRecipe> {
-        return axios.post(`${Server.baseUrl}/recipes`, item)
+        return axios.post(`/recipes`, item)
             .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
@@ -75,7 +75,7 @@ class Server {
      * @param update the partial recipe with the updated values
      */
     public static updateRecipe(id: string, update: Partial<INewRecipe>): Promise<IRecipe> {
-        return axios.put(`${Server.baseUrl}/recipes/${id}`, update)
+        return axios.put(`/recipes/${id}`, update)
             .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
@@ -85,14 +85,10 @@ class Server {
      * @param id the id of the recipe to delete
      */
     public static deleteRecipe(id: string): Promise<void> {
-        return axios.delete(`${Server.baseUrl}/recipes/${id}`)
+        return axios.delete(`/recipes/${id}`)
             .then(() => undefined)
             .catch(Server.useOriginalErrorMessage);
     }
-
-    private static baseUrl: string = process.env.NODE_ENV === 'production' ?
-        'https://overcooked.2brothers.tech' :
-        'http://localhost:4000';
 
     /**
      * The Overcooked-API server provides more useful error messages than the generic axios one.

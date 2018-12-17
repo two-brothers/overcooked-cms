@@ -15,13 +15,14 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
-    "db-local": "cd ../overcooked-api; npm run db",
-    "backend-local": "cd ../overcooked-api; npm run serve-local",
+    "db": "cd overcooked-api; npm run db",
+    "backend": "cd overcooked-api; npm run serve",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   },
+  "proxy": "http://localhost:3000",
   "devDependencies": {
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.12",

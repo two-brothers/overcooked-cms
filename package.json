@@ -24,7 +24,12 @@
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   },
-  "proxy": "http://localhost:3000",
+  "proxy": {
+    "/": {
+      "target": "http://localhost:3000",
+      "changeOrigin": true
+    }
+  },
   "devDependencies": {
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.12",

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
 import { initFood } from '../reducers/food/actions';
 import { initRecipes } from '../reducers/recipe/actions';
 import DisplayFood from './displayFood/DisplayFood';
@@ -12,6 +14,7 @@ import DisplayRecipes from './displayRecipe/DisplayRecipes';
  *   - to perform any initialisation logic when the app loads
  *   - to live for the duration of the app,
  *     so the initialisation logic is not repeated as components are destroyed and/or re-rendered.
+ *   - choose which components to display based on the route
  * Note that we cannot use the main App component for this purpose because the redux store
  * is only available in children of the App component
  */
@@ -23,10 +26,12 @@ class Container extends Component<IProps> {
 
     public render(): JSX.Element {
         return (
-            <div>
-                <DisplayRecipes/>
-                <DisplayFood/>
-            </div>
+            <BrowserRouter>
+                <Switch>
+                    <Route exact={true} path={'/'} component={DisplayRecipes}/>
+                    <Route path={'/food'} component={DisplayFood}/>
+                </Switch>
+            </BrowserRouter>
         );
     };
 }

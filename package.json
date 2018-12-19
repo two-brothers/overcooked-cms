@@ -25,9 +25,14 @@
     "eject": "react-scripts-ts eject"
   },
   "proxy": {
-    "/": {
-      "target": "http://localhost:3000",
-      "changeOrigin": true
+    "^/auth": {
+      "target": "http://localhost:3000"
+    },
+    "^/food": {
+      "target": "http://localhost:3000"
+    },
+    "^/recipes": {
+      "target": "http://localhost:3000"
     }
   },
   "devDependencies": {

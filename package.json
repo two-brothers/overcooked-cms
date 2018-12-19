@@ -18,7 +18,7 @@
   },
   "scripts": {
     "db": "cd overcooked-api; npm run db",
-    "backend": "cd overcooked-api; npm run serve",
+    "backend": "cd overcooked-api; npm run serve-dev",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",

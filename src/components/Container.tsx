@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import { initFood } from '../reducers/food/actions';
 import { initRecipes } from '../reducers/recipe/actions';
+import { retrieveUser } from '../reducers/user/actions';
 import DisplayFood from './displayFood/DisplayFood';
 import DisplayRecipes from './displayRecipe/DisplayRecipes';
 
@@ -22,6 +23,7 @@ class Container extends Component<IProps> {
     public componentDidMount(): void {
         this.props.initRecipes();
         this.props.initFood();
+        this.props.retrieveUser();
     }
 
     public render(): JSX.Element {
@@ -39,6 +41,7 @@ class Container extends Component<IProps> {
 interface IProps {
     initFood: () => Promise<undefined>;
     initRecipes: () => Promise<undefined>;
+    retrieveUser: () => Promise<undefined>;
 }
 
-export default connect(null, {initFood, initRecipes})(Container);
+export default connect(null, {initFood, initRecipes, retrieveUser})(Container);

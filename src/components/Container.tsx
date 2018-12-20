@@ -6,8 +6,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { initFood } from '../reducers/food/actions';
 import { initRecipes } from '../reducers/recipe/actions';
 import { retrieveUser } from '../reducers/user/actions';
-import DisplayFood from './displayFood/DisplayFood';
-import DisplayRecipes from './displayRecipe/DisplayRecipes';
+import Home from './Home';
 
 /**
  * A wrapper for the UI components.
@@ -30,8 +29,7 @@ class Container extends Component<IProps> {
         return (
             <BrowserRouter>
                 <Switch>
-                    <Route exact={true} path={'/'} component={DisplayRecipes}/>
-                    <Route path={'/food'} component={DisplayFood}/>
+                    <Route exact={true} path={'/'} component={Home}/>
                 </Switch>
             </BrowserRouter>
         );

@@ -1,78 +1,89 @@
-import Fab from '@material-ui/core/Fab';
-import Modal from '@material-ui/core/Modal';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '../../reducers';
-import { IState as IFoodState } from '../../reducers/food/reducer';
-import FoodItem from './FoodItem';
-import NewFood from './NewFood';
+import { IState as IUnit } from '../../reducers/units/reducer';
+import { IFood } from '../../server/interfaces';
+import InteractiveTable from '../InteractiveTable';
 
 /**
  * A class to display and interact with all food items
  */
 class DisplayFood extends Component<IProps> {
-    public state: IState = {
-        modal_open: false
-    };
 
     public render(): JSX.Element {
+        const foodItems = this.props.foodItems;
         return (
-            <div>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Singular</TableCell>
-                            <TableCell>Plural</TableCell>
-                            <TableCell>Standard Unit</TableCell>
-                            <TableCell>
-                                <Fab size={'small'} onClick={this.setModalOpen(true)}><AddIcon/></Fab>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{
-                        Object.getOwnPropertyNames(this.props.food).map(id => (
-                            <FoodItem key={id} food={this.props.food[id]}/>
-                        ))
-                    }</TableBody>
-                </Table>
-                <Modal open={this.state.modal_open} onClose={this.setModalOpen(false)}>
-                    <Paper>
-                        <NewFood/>
-                    </Paper>
-                </Modal>
-            </div>
+            <InteractiveTable
+                headings={['Singular', 'Plural', 'Unit']}
+                keyFn={this.key}
+                valueFn={this.value}
+                records={foodItems}
+                newRoute={'/cms/food/new'}
+                selectRoute={this.select}/>
         );
     }
 
     /**
-     * Return a function that can be used to either open or close the modal
-     * @param open whether the returned function opens (if 'open' is true) or closes the modal
+     * Use the record id as a unique key
+     * @param food the food record being displayed
      */
-    private setModalOpen = (open: boolean) => () => {
-        this.setState({modal_open: open});
+    private key = (food: IFood) => food.id;
+
+    /**
+     * Navigate to a route that includes the record id when the food item is selected
+     * @param food the selected food record
+     */
+    private select = (food: IFood) => `/cms/food/${food.id}`;
+
+    /**
+     * Return the JSX Element that should be inserted in the table under the specified heading
+     * For the name parameters, simply return a span with the name in it
+     * For the unit parameter, return a list of human-readable units separated by line breaks
+     * @param food the food record to display
+     * @param heading the particular property to display
+     */
+    private value = (food: IFood, heading: string): JSX.Element => {
+        switch (heading) {
+            case 'Singular':
+                return (<span>{food.name.singular}</span>);
+            case 'Plural':
+                return (<span>{food.name.plural}</span>);
+            case 'Unit':
+                return this.displayUnits(food);
+            default:
+                throw new Error(`Unrecognised heading: ${heading}`);
+        }
+    };
+
+    /**
+     * Creates a JSX element containing the food item's conversions separated by line breaks
+     * @param food the food item
+     */
+    private displayUnits = (food: IFood): JSX.Element => {
+        const units = this.props.units;
+        return (
+            <span>
+                {food.conversions.map(conv => {
+                    const unit = units[conv.unit_id];
+                    const singular = `${unit.singular} ${food.name.singular}`;
+                    const plural = `${unit.plural} ${food.name.plural}`;
+                    return (<span key={conv.unit_id}>{conv.ratio}{conv.ratio === 1 ? singular : plural}<br/></span>);
+                })}
+            </span>
+        );
     };
 }
 
-interface IState {
-    modal_open: boolean;
-}
-
 interface IProps {
-    food: IFoodState;
+    foodItems: IFood[];
+    units: IUnit;
 }
-
 
 const mapStateToProps = (state: IGlobalState) => ({
-    food: state.food
+    foodItems: Object.getOwnPropertyNames(state.food).map(id => state.food[id]),
+    units: state.units
 });
 
 export default connect(mapStateToProps)(DisplayFood);

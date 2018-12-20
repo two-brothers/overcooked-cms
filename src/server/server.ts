@@ -9,6 +9,25 @@ import { IFood, INewFood, INewRecipe, IPagedFood, IPagedRecipes, IRecipe } from 
 class Server {
 
     /**
+     * Retrieves and returns the current active user profile
+     * (or null if there is no active user)
+     */
+    public static getActiveUser(): Promise<string | null> {
+        return axios.get('/auth/whoami')
+            .then(res => res.data.data)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
+    /**
+     * Logs the user out of the session
+     */
+    public static logOut(): Promise<void> {
+        return axios.get('/auth/logout')
+            .then(() => undefined)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
+    /**
      * Retrieves the food records at the specified page.
      * @param page the index of the page to retrieve
      */

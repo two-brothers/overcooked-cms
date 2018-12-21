@@ -1,68 +1,56 @@
-import Fab from '@material-ui/core/Fab';
-import Modal from '@material-ui/core/Modal';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '../../reducers';
 import { IState as IRecipeState } from '../../reducers/recipe/reducer';
-import NewRecipe from './NewRecipe';
-import RecipeItem from './RecipeItem';
+import { IRecipe } from '../../server/interfaces';
+import InteractiveTable from '../InteractiveTable';
 
 /**
  * A class to display and interact with all recipes
  */
 class DisplayRecipes extends Component<IProps> {
-    public state: IState = {
-        modal_open: false
-    };
 
     public render(): JSX.Element {
+        const recipes = this.props.recipes;
         return (
-            <div>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>
-                                <Fab size={'small'} onClick={this.setModalOpen(true)}><AddIcon/></Fab>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{
-                        this.props.recipes.map(recipe => (
-                           <RecipeItem key={recipe.id} recipe={recipe}/>
-                        ))
-                    }</TableBody>
-                </Table>
-                <Modal open={this.state.modal_open} onClose={this.setModalOpen(false)}>
-                    <Paper>
-                        <NewRecipe/>
-                    </Paper>
-                </Modal>
-            </div>
+            <InteractiveTable
+                headings={['Title']}
+                keyFn={this.key}
+                valueFn={this.value}
+                records={recipes}
+                newRoute={'/cms/recipe/new'}
+                selectRoute={this.select}/>
         );
     }
 
     /**
-     * Return a function that can be used to either open or close the modal
-     * @param open whether the returned function opens (if 'open' is true) or closes the modal
+     * Use the record id as a unique key
+     * @param recipe the recipe being displayed
      */
-    private setModalOpen = (open: boolean) => () => {
-        this.setState({modal_open: open});
+    private key = (recipe: IRecipe) => recipe.id;
+
+    /**
+     * Navigate to a route that includes the record id when the recipe is selected
+     * @param recipe the selected recipe
+     */
+    private select = (recipe: IRecipe) => `/cms/recipe/${recipe.id}`;
+
+    /**
+     * Return the JSX Element that should be inserted in the table under the specified heading
+     * There should be only one heading: 'Title'. Return a span with the title in it
+     * @param recipe the recipe to display
+     * @param heading the particular property to display
+     */
+    private value = (recipe: IRecipe, heading: string): JSX.Element => {
+        switch (heading) {
+            case 'Title':
+                return (<span>{recipe.title}</span>);
+            default:
+                throw new Error(`Unrecognised heading: ${heading}`);
+        }
     };
-
-}
-
-interface IState {
-    modal_open: boolean
 }
 
 interface IProps {

@@ -3,21 +3,21 @@ import { INewRecipe } from '../../server/interfaces';
 import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
-import { ActionNames, AddItems, RemoveItem, UpdateItem } from './action.types';
+import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types';
 
 /**
- * Retrieve all the recipe items, one page at a time, and dispatch ADD_ITEMS as each page is retrieved.
+ * Retrieve all the recipe items, one page at a time, and dispatch REPLACE_ITEMS as each page is retrieved.
  * Dispatch an error for any unexpected server response.
  */
-export const initRecipes = () => (dispatch: Dispatch<AddItems | AddError>) =>
+export const initRecipes = () => (dispatch: Dispatch<ReplaceItems | AddError>) =>
     initRecipePage(0, dispatch);
 
-const initRecipePage = (page: number, dispatch: Dispatch<AddItems | AddError>): Promise<undefined> =>
+const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>): Promise<undefined> =>
     Server.getRecipePage(page)
         .then(res => {
             dispatch({
                 items: res.recipes,
-                type: ActionNames.ADD_ITEMS
+                type: ActionNames.REPLACE_ITEMS
             });
 
             return res.last_page ?
@@ -28,15 +28,15 @@ const initRecipePage = (page: number, dispatch: Dispatch<AddItems | AddError>): 
         .then(() => undefined);
 
 /**
- * Send the item to the server for creation, and dispatch ADD_ITEM when the new record is returned
+ * Send the item to the server for creation, and dispatch REPLACE_ITEMS when the new record is returned
  * Dispatch an error for any unexpected server response.
  * @param item the new recipe item. This function does not validate the structure of the recipe
  */
-export const createRecipe = (item: INewRecipe) => (dispatch: Dispatch<AddItems | AddError>) =>
+export const createRecipe = (item: INewRecipe) => (dispatch: Dispatch<ReplaceItems | AddError>) =>
     Server.createRecipe(item)
         .then(res => dispatch({
             items: [res],
-            type: ActionNames.ADD_ITEMS
+            type: ActionNames.REPLACE_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

@@ -3,7 +3,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '../../reducers';
-import { IState as IRecipeState } from '../../reducers/recipe/reducer';
 import { IRecipe } from '../../server/interfaces';
 import InteractiveTable from '../InteractiveTable';
 
@@ -54,11 +53,11 @@ class DisplayRecipes extends Component<IProps> {
 }
 
 interface IProps {
-    recipes: IRecipeState
+    recipes: IRecipe[]
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
-    recipes: state.recipes
+    recipes: Object.getOwnPropertyNames(state.recipes).map(id => state.recipes[id])
 });
 
 export default connect(mapStateToProps)(DisplayRecipes);

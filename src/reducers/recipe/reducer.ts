@@ -1,7 +1,9 @@
 import { IRecipe } from '../../server/interfaces';
 import { Action, ActionNames } from './action.types';
 
-export type IState = IRecipe[];
+export interface IState {
+    [id: string]: IRecipe
+}
 
 /**
  * Handle the recipe actions as follows
@@ -14,21 +16,22 @@ export type IState = IRecipe[];
  */
 export default function (state = initialState, action: Action) {
     switch (action.type) {
-        case ActionNames.ADD_ITEMS:
-            return [
-                ...state,
-                ...action.items
-            ];
+        case ActionNames.REPLACE_ITEMS:
+            const updates = {};
+            action.items.map(item => {
+                updates[item.id] = item;
+            });
+            return Object.assign({}, state, updates);
         case ActionNames.REMOVE_ITEM:
-            return state.filter(recipe => recipe.id !== action.id);
+            const updated = Object.assign({}, state);
+            delete updated[action.id];
+            return updated;
         case ActionNames.UPDATE_ITEM:
-            return state.map(recipe => recipe.id === action.id ?
-                Object.assign({}, recipe, action.update) :
-                recipe
-            );
+            const recipe = Object.assign({}, state[action.id], action.update);
+            return Object.assign({}, state, {[action.id]: recipe});
         default:
             return state;
     }
 };
 
-const initialState: IState = [];
+const initialState: IState = {};

@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { initFood } from '../reducers/food/actions';
 import { initRecipes } from '../reducers/recipe/actions';
 import { retrieveUser } from '../reducers/user/actions';
+import FoodRecord from './displayFood/FoodRecord';
 import Home from './Home';
 
 /**
@@ -30,6 +31,8 @@ class Container extends Component<IProps> {
             <BrowserRouter>
                 <Switch>
                     <Route exact={true} path={'/'} component={Home}/>
+                    <Route exact={true} path={'/cms/food/new'} component={FoodRecord}/>
+                    <Route exact={true} path={'/cms/food/:id?'} component={FoodRecord}/>
                 </Switch>
             </BrowserRouter>
         );

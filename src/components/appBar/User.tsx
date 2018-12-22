@@ -3,8 +3,8 @@ import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { IGlobalState } from '../reducers';
-import { logOut } from '../reducers/user/actions';
+import { IGlobalState } from '../../reducers';
+import { logOut } from '../../reducers/user/actions';
 
 /**
  * A component that displays the active user and provides links to log in or out
@@ -12,14 +12,18 @@ import { logOut } from '../reducers/user/actions';
 class User extends Component<IProps> {
     public render(): JSX.Element {
         const profile = this.props.profile;
-        return profile ?
-            (
-                <div>
-                    <p>{profile}</p>
-                    <Button onClick={this.props.logOut}>Sign Out</Button>
-                </div>
-            ) :
-            <a href={'/auth/github'}>Sign In</a>;
+        return (
+            <div>
+                {profile ?
+                    <div>
+                        <span>{profile}</span>
+                        <Button onClick={this.props.logOut} color="inherit">Sign Out</Button>
+                    </div>
+                    :
+                    <a href={'/auth/github'}>Sign In</a>
+                }
+            </div>
+        );
     }
 }
 

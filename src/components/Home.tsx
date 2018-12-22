@@ -4,7 +4,6 @@ import { ChangeEvent, Component } from 'react';
 
 import DisplayFood from './displayFood/DisplayFood';
 import DisplayRecipes from './displayRecipe/DisplayRecipes';
-import User from './User';
 
 /**
  * A launchpad component that lets a user authenticate
@@ -24,7 +23,6 @@ class Home extends Component<IProps> {
                 </Tabs>
                 {this.state.activeTab === 0 && <DisplayRecipes/>}
                 {this.state.activeTab === 1 && <DisplayFood/>}
-                <User/>
             </Typography>
         );
     };

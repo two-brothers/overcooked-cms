@@ -26,13 +26,13 @@
   },
   "proxy": {
     "^/auth": {
-      "target": "http://localhost:3000"
+      "target": "http://localhost:5000"
     },
     "^/food": {
-      "target": "http://localhost:3000"
+      "target": "http://localhost:5000"
     },
     "^/recipes": {
-      "target": "http://localhost:3000"
+      "target": "http://localhost:5000"
     }
   },
   "devDependencies": {

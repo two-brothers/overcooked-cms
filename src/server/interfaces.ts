@@ -47,8 +47,17 @@ export interface IIngredientSection {
     ingredients: IIngredient[];
 }
 
-export interface IIngredient {
+export type IIngredient = IQuantifiedIngredient | IFreeTextIngredient;
+
+export interface IQuantifiedIngredient {
+    ingredient_type: 'Quantified';
     amount: number;
-    unit_id: number;
+    unit_ids: number[];
     food_id: string;
+    additional_desc?: string;
+}
+
+export interface IFreeTextIngredient {
+    ingredient_type: 'FreeText';
+    description: string;
 }

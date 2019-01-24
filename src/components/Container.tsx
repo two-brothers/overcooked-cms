@@ -8,6 +8,7 @@ import { initRecipes } from '../reducers/recipe/actions';
 import { retrieveUser } from '../reducers/user/actions';
 import AppBar from './appBar/AppBar';
 import FoodRecord from './displayFood/FoodRecord';
+import RecipeRecord from './displayRecipe/RecipeRecord';
 import Home from './Home';
 
 /**
@@ -36,6 +37,8 @@ class Container extends Component<IProps> {
                         <Route exact={true} path={'/'} component={Home}/>
                         <Route exact={true} path={'/cms/food/new'} component={FoodRecord}/>
                         <Route exact={true} path={'/cms/food/:id?'} component={FoodRecord}/>
+                        <Route exact={true} path={'/cms/recipe/new'} component={RecipeRecord}/>
+                        <Route exact={true} path={'/cms/recipe/:id?'} component={RecipeRecord}/>
                     </Switch>
                 </BrowserRouter>
             </div>

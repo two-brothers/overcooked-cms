@@ -11,6 +11,7 @@ import { IGlobalState } from '../../reducers';
 import { createRecipe, updateRecipe } from '../../reducers/recipe/actions';
 import { IState as IRecipeState } from '../../reducers/recipe/reducer';
 import { IIngredientSection, INewRecipe } from '../../server/interfaces';
+import Ingredients, { IState as IIngsState } from './Ingredients';
 
 /**
  * A class to create or update a Recipe Record
@@ -59,7 +60,12 @@ class RecipeRecord extends Component<IProps> {
                                     inputProps={{readOnly: !authenticated, min: 1}}
                         />
 
-                        <Compress heading={'Ingredients'}><p>{`TODO: ${ingredient_sections.toString()}`}</p></Compress>
+                        <Compress heading={'Ingredients'}>
+                            <Ingredients state={{sections: ingredient_sections}}
+                                         propagate={this.updateIngredients}
+                                         authenticated={authenticated}
+                            />
+                        </Compress>
 
                         <Compress heading={'Method'}><p>{`TODO: ${method.toString()}`}</p></Compress>
 
@@ -152,6 +158,17 @@ class RecipeRecord extends Component<IProps> {
      * or the number of servings the recipe produces
      */
     private toggleProduces = () => this.setState((state: IState) => ({servesSelected: !state.servesSelected}));
+
+    /**
+     * Whenever the Ingredients sub-component updates its internal state,
+     * update this component's state accordingly
+     * @param updateFn the update function that was used to update the Ingredients component's state
+     */
+    private updateIngredients = (updateFn: (ingState: IIngsState) => Partial<IIngsState>) =>
+        this.setState((state: IState) => {
+            const update = updateFn({sections: state.ingredient_sections});
+            return update.sections ? {ingredient_sections: update.sections} : {};
+        });
 
     /**
      * Returns a boolean indicating whether the component describes a valid recipe

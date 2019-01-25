@@ -12,6 +12,7 @@ import { createRecipe, updateRecipe } from '../../reducers/recipe/actions';
 import { IState as IRecipeState } from '../../reducers/recipe/reducer';
 import { IIngredientSection, INewRecipe } from '../../server/interfaces';
 import Ingredients, { IState as IIngsState } from './Ingredients';
+import RecipeMethod, { IState as IMethodState } from './RecipeMethod';
 
 /**
  * A class to create or update a Recipe Record
@@ -67,7 +68,12 @@ class RecipeRecord extends Component<IProps> {
                             />
                         </Compress>
 
-                        <Compress heading={'Method'}><p>{`TODO: ${method.toString()}`}</p></Compress>
+                        <Compress heading={'Method'}>
+                            <RecipeMethod state={{steps: method}}
+                                          propagate={this.updateMethod}
+                                          authenticated={authenticated}
+                            />
+                        </Compress>
 
                         <InputField label={'reference url'}
                                     value={reference_url}
@@ -168,6 +174,17 @@ class RecipeRecord extends Component<IProps> {
         this.setState((state: IState) => {
             const update = updateFn({sections: state.ingredient_sections});
             return update.sections ? {ingredient_sections: update.sections} : {};
+        });
+
+    /**
+     * Whenever the RecipeMethod sub-component updates its internal state,
+     * update this component's state accordingly
+     * @param updateFn the update function that was used to update the RecipeMethod component's state
+     */
+    private updateMethod = (updateFn: (methodState: IMethodState) => Partial<IMethodState>) =>
+        this.setState((state: IState) => {
+            const update = updateFn({steps: state.method});
+            return update.steps ? {method: update.steps} : {};
         });
 
     /**

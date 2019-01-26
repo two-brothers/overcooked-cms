@@ -8,9 +8,10 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
 import { IGlobalState } from '../../reducers';
-import { createRecipe, updateRecipe } from '../../reducers/recipe/actions';
+import { createRecipe, deleteRecipe, updateRecipe } from '../../reducers/recipe/actions';
 import { IState as IRecipeState } from '../../reducers/recipe/reducer';
 import { IIngredientSection, INewRecipe } from '../../server/interfaces';
+import DeleteRecord from '../DeleteRecord';
 import { Utility } from '../utility';
 import Ingredients, { IState as IIngsState } from './Ingredients';
 import RecipeMethod, { IState as IMethodState } from './RecipeMethod';
@@ -97,11 +98,17 @@ class RecipeRecord extends Component<IProps> {
                         }
 
                         {authenticated ?
-                            <Button type={'submit'}
-                                    disabled={!this.valid()}
-                                    color={'primary'}>
-                                {action.toUpperCase()}
-                            </Button> :
+                            <React.Fragment>
+                                <Button type={'submit'}
+                                        disabled={!this.valid()}
+                                        color={'primary'}>
+                                    {action.toUpperCase()}
+                                </Button>
+                                {id ?
+                                    <DeleteRecord id={id} onDelete={this.deleteRecipe(id)} />
+                                    : null
+                                }
+                            </React.Fragment> :
                             <p>{`Please sign in to ${action} the record`}</p>
                         }
                     </form>
@@ -193,8 +200,10 @@ class RecipeRecord extends Component<IProps> {
      * Update the specified property whenever the input box changes
      * @param property a first-level property on the component state
      */
-    private onInputChange = (property: string) => (e: ChangeEvent<HTMLInputElement>) =>
-        this.setState({[property]: e.target.value});
+    private onInputChange = (property: string) => (e: ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value; // cache the result before React's Synthetic Handler clears it
+        this.setState(() => ({[property]: value}));
+    };
 
     /**
      * Toggle whether the 'produces' value correspond to the number of items the recipe makes,
@@ -270,6 +279,13 @@ class RecipeRecord extends Component<IProps> {
 
         return validTitle && validQuantities && validIngredientSections && validMethod && validUrls;
     };
+
+    /**
+     * The DeleteRecord component expects a function with no arguments, but we need to call
+     * this.props.deleteRecipe with the recipe id.
+     * This function simply adds a layer of indirection to get the call signatures to match
+     */
+    private deleteRecipe = (id: string) => () => this.props.deleteRecipe(id);
 }
 
 /**
@@ -320,6 +336,7 @@ type IProps = RouteComponentProps<{ id: string }> & {
     authenticated: boolean;
     recipes: IRecipeState;
     createRecipe: (item: INewRecipe) => Promise<undefined>;
+    deleteRecipe: (id: string) => Promise<undefined>;
     updateRecipe: (id: string, item: Partial<INewRecipe>) => Promise<undefined>;
 }
 
@@ -328,4 +345,4 @@ const mapStateToProps = (state: IGlobalState) => ({
     recipes: state.recipes
 });
 
-export default connect(mapStateToProps, {createRecipe, updateRecipe})(RecipeRecord);
+export default connect(mapStateToProps, {createRecipe, deleteRecipe, updateRecipe})(RecipeRecord);

@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
 import { IGlobalState } from '../../reducers';
-import { createFood, updateFood } from '../../reducers/food/actions';
+import { createFood, deleteFood, updateFood } from '../../reducers/food/actions';
 import { IState as IFoodState } from '../../reducers/food/reducer';
 import { IState as IUnits } from '../../reducers/units/reducer';
 import { INewFood } from '../../server/interfaces';
+import DeleteRecord from '../DeleteRecord';
 import { Utility } from '../utility';
 import UnitsSelector, { IState as IUSState } from './UnitsSelector';
 
@@ -55,11 +56,17 @@ class FoodRecord extends Component<IProps> {
                         />
 
                         {authenticated ?
-                            <Button type={'submit'}
-                                    disabled={!this.valid()}
-                                    color={'primary'}>
-                                {action.toUpperCase()}
-                            </Button> :
+                            <React.Fragment>
+                                <Button type={'submit'}
+                                        disabled={!this.valid()}
+                                        color={'primary'}>
+                                    {action.toUpperCase()}
+                                </Button>
+                                {id ?
+                                    <DeleteRecord id={id} onDelete={this.deleteFood(id)} /> :
+                                    null
+                                }
+                            </React.Fragment> :
                             <p>{`Please sign in to ${action} the record`}</p>
                         }
                     </form>
@@ -153,6 +160,13 @@ class FoodRecord extends Component<IProps> {
             selections.filter(unit => unit.selected).length > 0 &&
             selections.filter(unit => unit.selected && unit.quantity <= 0).length === 0;
     };
+
+    /**
+     * The DeleteRecord component expects a function with no arguments, but we need to call
+     * this.props.deleteFood with the recipe id.
+     * This function simply adds a layer of indirection to get the call signatures to match
+     */
+    private deleteFood = (id: string) => () => this.props.deleteFood(id);
 }
 
 interface IState {
@@ -172,6 +186,7 @@ type IProps = RouteComponentProps<{ id: string }> & {
     food: IFoodState;
     units: IUnits;
     createFood: (item: INewFood) => Promise<undefined>;
+    deleteFood: (id: string) => Promise<undefined>;
     updateFood: (id: string, item: Partial<INewFood>) => Promise<undefined>;
 }
 
@@ -181,4 +196,4 @@ const mapStateToProps = (state: IGlobalState) => ({
     units: state.units
 });
 
-export default connect(mapStateToProps, {createFood, updateFood})(FoodRecord);
+export default connect(mapStateToProps, {createFood, deleteFood, updateFood})(FoodRecord);

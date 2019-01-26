@@ -11,6 +11,7 @@ import { IGlobalState } from '../../reducers';
 import { createRecipe, updateRecipe } from '../../reducers/recipe/actions';
 import { IState as IRecipeState } from '../../reducers/recipe/reducer';
 import { IIngredientSection, INewRecipe } from '../../server/interfaces';
+import { Utility } from '../utility';
 import Ingredients, { IState as IIngsState } from './Ingredients';
 import RecipeMethod, { IState as IMethodState } from './RecipeMethod';
 
@@ -149,7 +150,43 @@ class RecipeRecord extends Component<IProps> {
      * @param e the form submission event
      */
     private onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        // TODO
+        e.preventDefault();
+        const {title, servesSelected, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url, id} = this.state;
+        const {recipes} = this.props;
+        // for ui reasons, ingredient_sections has strings instead of numbers, and empty strings instead of undefined properties
+        // fix that before submission
+        const sections: IIngredientSection[] = ingredient_sections.map(section =>
+            Object.assign(
+                {
+                    ingredients: section.ingredients.map(ingredient =>
+                        ingredient.ingredient_type === 'Quantified' ?
+                            Object.assign(
+                                {ingredient_type: ingredient.ingredient_type, food_id: ingredient.food_id},
+                                {amount: Number(ingredient.amount)},
+                                {unit_ids: ingredient.unit_ids.map(unitID => Number(unitID))},
+                                ingredient.additional_desc ? {additional_desc: ingredient.additional_desc} : {}
+                            ) :
+                            ingredient
+                    )
+                },
+                section.heading ? {heading: section.heading} : {}
+            )
+        );
+
+        const newRecipe: INewRecipe = Object.assign({},
+            {title, reference_url, image_url, method},
+            {[servesSelected ? 'serves' : 'makes']: Number(produces)},
+            {'prep_time': Number(prep_time), 'cook_time': Number(cook_time), 'ingredient_sections': sections}
+        );
+
+        if (id) {
+            const update = Utility.subtract(newRecipe, recipes[id]);
+            if (Object.getOwnPropertyNames(update).length > 0) {
+                this.props.updateRecipe(id, update);
+            }
+        } else {
+            this.props.createRecipe(newRecipe);
+        }
     };
 
     /**
@@ -190,7 +227,49 @@ class RecipeRecord extends Component<IProps> {
     /**
      * Returns a boolean indicating whether the component describes a valid recipe
      */
-    private valid = () => true; // TODO
+    private valid = () => {
+        const {title, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url} = this.state;
+        const validTitle = title && title.trim().length > 0;
+        const validQuantities =
+            Number.isInteger(Number(produces)) && Number(produces) > 0 &&
+            Number.isInteger(Number(prep_time)) && Number(prep_time) > 0 &&
+            Number.isInteger(Number(cook_time)) && Number(cook_time) > 0;
+        const validIngredientSections =
+            ingredient_sections.length > 0 &&
+            ingredient_sections.reduce((allSectionsAreValid, section) =>
+                allSectionsAreValid &&
+                // we don't need to check the heading - it is valid in all circumstances
+                section.ingredients.reduce((allIngredientsAreValid, ingredient) =>
+                    allIngredientsAreValid && (
+                        (
+                            ingredient.ingredient_type === 'Quantified' &&
+                            Number(ingredient.amount) > 0 &&
+                            ingredient.unit_ids.length > 0 &&
+                            ingredient.unit_ids.reduce((allUnitIdsAreValid, unitID) =>
+                                allUnitIdsAreValid &&
+                                Number.isInteger(Number(unitID)) &&
+                                Number(unitID) >= 0 &&
+                                Number(unitID) <= 12,
+                                true) &&
+                            // this component cannot confirm that the food id corresponds to a real food item
+                            // the UI should enforce it.
+                            ingredient.food_id.trim().length > 0
+                            // we don't need to check the additional_desc - it is valid in all circumstances
+                        ) ||
+                        (
+                            ingredient.ingredient_type === 'FreeText' &&
+                            ingredient.description.trim().length > 0
+                        )
+                    ),
+                    true),
+                true);
+        const validMethod =
+            method.length > 0 &&
+            method.reduce((allStepsAreValid, step) => step.trim().length > 0, true);
+        const validUrls = reference_url.trim().length > 0 && image_url.trim().length > 0;
+
+        return validTitle && validQuantities && validIngredientSections && validMethod && validUrls;
+    };
 }
 
 /**

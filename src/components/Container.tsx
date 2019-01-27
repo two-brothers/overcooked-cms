@@ -23,9 +23,11 @@ import Home from './Home';
  */
 class Container extends Component<IProps> {
     public componentDidMount(): void {
-        this.props.initRecipes();
-        this.props.initFood();
-        this.props.retrieveUser();
+        Promise.all([
+            this.props.initRecipes(),
+            this.props.initFood(),
+            this.props.retrieveUser()
+        ]).catch(() => null);
     }
 
     public render(): JSX.Element {

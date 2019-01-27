@@ -22,11 +22,19 @@ class Ingredient extends SubComponent<IProps, IState> {
             const {amount, unit_ids, food_id, additional_desc} = this.state.ing;
             const {units, food, authenticated, classes} = this.props;
             const isSingular = Number(amount) === 1;
+
+            // the unit id options are either restricted by the chosen food, or not restricted at all
+            // filter out the ones already chosen
+            let unitIdOptions = food_id ? food[food_id].conversions.map(conv => conv.unit_id) : units.map((_, idx) => idx);
+            unitIdOptions = unitIdOptions.filter(id => unit_ids.indexOf(id) < 0);
+
+            let unitNames = units.map(unit => isSingular ? unit.singular : unit.plural);
             // replace the singular (empty) unit symbol with '(item)' or '(items)'
-            const unitOptions = isSingular ?
-                ['(item)', ...units.map(unit => unit.singular).slice(1)] :
-                ['(items)', ...units.map(unit => unit.plural).slice(1)];
-            const selectedUnits = unit_ids.map(id => unitOptions[id]);
+            unitNames = [isSingular ? '(item)' : '(items)', ...unitNames.slice(1)];
+
+            const selectedUnitNames = unit_ids.map(id => unitNames[id]);
+            const unitOptions = unitIdOptions.map(id => ({idx: id, name: unitNames[id]}));
+
             const foodIds = Object.getOwnPropertyNames(food);
 
             return (
@@ -58,13 +66,17 @@ class Ingredient extends SubComponent<IProps, IState> {
                         <FormControl className={classes.fullWidth}>
                             <InputLabel required={true}>Units</InputLabel>
                             <Select onChange={this.onUnitSelection} value={''}>
-                                {unitOptions.map((option, idx) => (
-                                    <MenuItem value={idx} key={idx} disabled={!authenticated}>{option}</MenuItem>
+                                {unitOptions.map(option => (
+                                    <MenuItem value={option.idx}
+                                              disabled={!authenticated}
+                                              key={option.idx}>
+                                        {option.name}
+                                    </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
                     </FlexView>
-                    {selectedUnits.map((selection, selectionIdx) => (
+                    {selectedUnitNames.map((selection, selectionIdx) => (
                         <FlexView key={selection} className={classes.spaced}>
                             <Chip label={selection}
                                   onDelete={authenticated ? this.deleteSelectedUnit(selectionIdx) : undefined}
@@ -137,14 +149,22 @@ class Ingredient extends SubComponent<IProps, IState> {
         );
 
     /**
-     * Whenever a food is selected, set the food_id
+     * Whenever a food is selected, set the food_id and remove any incompatible units
      */
     private onFoodSelection = (e: ChangeEvent<HTMLSelectElement>) => {
-        const id = e.target.value; // cache the result before React's Synthetic Handler clear it
-        this.setState((state: IState) => state.ing.ingredient_type === 'Quantified' ?
-            {ing: NestedUtility.replaceField(state.ing, 'food_id', id)} :
-            {}
-        );
+        const foodId = e.target.value; // cache the result before React's Synthetic Handler clear it
+        this.setState((state: IState) => {
+            if (state.ing.ingredient_type === 'Quantified') {
+                const ing: IIngredient = NestedUtility.replaceField(state.ing, 'food_id', foodId);
+                if (ing.ingredient_type === 'Quantified') { // this has to be true, but typescript doesn't know it
+                    const matchingUnitIds = this.props.food[foodId].conversions.map(conv => conv.unit_id);
+                    const unitIds = ing.unit_ids.filter(unitId => matchingUnitIds.indexOf(unitId) >= 0);
+                    return {ing: NestedUtility.replaceField(ing, 'unit_ids', unitIds)};
+                }
+            }
+            return {};
+
+        });
     };
 
     /**
@@ -160,7 +180,6 @@ class Ingredient extends SubComponent<IProps, IState> {
         }
         return '';
     };
-
 }
 
 const styles = () => ({

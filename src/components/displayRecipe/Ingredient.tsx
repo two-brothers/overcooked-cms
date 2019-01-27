@@ -119,7 +119,7 @@ class Ingredient extends SubComponent<IProps, IState> {
      * @param property a first-level property on the component state
      */
     private onInputChange = (property: string) => (e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value; // cache the result before React's Synthetic Handler clears it
+        const value = String(e.target.value); // cache the result before React's Synthetic Handler clears it
         this.setState((state: IState) => ({
             ing: NestedUtility.replaceField(state.ing, property, value)
         }));

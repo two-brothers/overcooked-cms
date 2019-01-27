@@ -14,8 +14,8 @@ import { IUnitSelection } from './FoodRecord';
  */
 class UnitsSelector extends SubComponent<IProps, IState> {
     public render(): JSX.Element {
-        const selections = this.state.unit.selections;
-        const readOnly = this.props.readOnly;
+        const { selections } = this.state.unit;
+        const { readOnly } = this.props;
 
         return (
             <FormControl required={true}
@@ -31,12 +31,12 @@ class UnitsSelector extends SubComponent<IProps, IState> {
                                       onChange={this.toggleSelected(id)}
                                       disabled={readOnly}
                             />
-                            <TextField value={unit.quantity}
+                            <TextField value={String(unit.quantity)}
                                        onChange={this.onQuantityChange(id)}
                                        required={unit.selected}
                                        type={'number'}
-                                       inputProps={{min: 0, step: 0.1, readOnly}}/>
-                            <ListItemText primary={this.measurement(id)}/>
+                                       inputProps={{min: 0, step: 0.1, readOnly}} />
+                            <ListItemText primary={this.measurement(id)} />
                         </MenuItem>
                     ))}
                 </Select>
@@ -66,8 +66,8 @@ class UnitsSelector extends SubComponent<IProps, IState> {
      * @param id the unit id
      */
     private onQuantityChange = (id: number) => (e: ChangeEvent<HTMLInputElement>) => {
-        const value: number = Number(e.target.value); // cache the result before React's Synthetic Handler clears it
-        this.setState((state: IState) => ({unit: NestedUtility.replaceField<number>(state.unit, `selections[${id}].quantity`, value)}));
+        const value = String(e.target.value); // cache the result before React's Synthetic Handler clears it
+        this.setState((state: IState) => ({unit: NestedUtility.replaceField<string>(state.unit, `selections[${id}].quantity`, value)}));
     };
 
     /**
@@ -77,7 +77,7 @@ class UnitsSelector extends SubComponent<IProps, IState> {
      * @param id the unit id
      */
     private measurement = (id: number) => {
-        return this.state.unit.selections[id].quantity === 1 ?
+        return Number(this.state.unit.selections[id].quantity) === 1 ?
             `${this.props.units[id].singular} ${this.props.singular ? this.props.singular : '[item]'}` :
             `${this.props.units[id].plural} ${this.props.plural ? this.props.plural : '[items]'}`;
     };

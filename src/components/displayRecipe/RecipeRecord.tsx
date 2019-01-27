@@ -201,7 +201,7 @@ class RecipeRecord extends Component<IProps> {
      * @param property a first-level property on the component state
      */
     private onInputChange = (property: string) => (e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value; // cache the result before React's Synthetic Handler clears it
+        const value = String(e.target.value); // cache the result before React's Synthetic Handler clears it
         this.setState(() => ({[property]: value}));
     };
 

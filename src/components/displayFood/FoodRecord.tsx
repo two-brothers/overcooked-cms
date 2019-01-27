@@ -118,7 +118,7 @@ class FoodRecord extends Component<IProps> {
             conversions: selections.map((_, unitID) => unitID)
                 .filter(unitID => selections[unitID].selected)
                 .map(unitID => ({
-                    ratio: selections[unitID].quantity,
+                    ratio: Number(selections[unitID].quantity),
                     unit_id: unitID
                 })),
             name: {plural, singular}
@@ -158,7 +158,7 @@ class FoodRecord extends Component<IProps> {
         return singular.length > 0 &&
             plural.length > 0 &&
             selections.filter(unit => unit.selected).length > 0 &&
-            selections.filter(unit => unit.selected && unit.quantity <= 0).length === 0;
+            selections.filter(unit => unit.selected && Number(unit.quantity) <= 0).length === 0;
     };
 
     /**

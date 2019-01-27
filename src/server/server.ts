@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IFood, INewFood, INewRecipe, IPagedFood, IPagedRecipes, IRecipe } from './interfaces';
+import { IAugmentedRecipe, IFood, INewFood, INewRecipe, IPagedFood, IPagedRecipes, IRecipe } from './interfaces'
 
 /**
  * A class to interact with the Overcooked backend server.
@@ -24,6 +24,16 @@ class Server {
     public static logOut(): Promise<void> {
         return axios.get('/auth/logout')
             .then(() => undefined)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
+    /**
+     * Retrieve the food record with the specified id
+     * @param id the id of the food item
+     */
+    public static getFood(id: string): Promise<IFood> {
+        return axios.get(`/food/${id}`)
+            .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
 
@@ -65,6 +75,16 @@ class Server {
     public static deleteFood(id: string): Promise<void> {
         return axios.delete(`/food/${id}`)
             .then(() => undefined)
+            .catch(Server.useOriginalErrorMessage);
+    }
+
+    /**
+     * Retrieve the recipe record with the specified id
+     * @param id the id of the recipe item
+     */
+    public static getRecipe(id: string): Promise<IAugmentedRecipe> {
+        return axios.get(`/recipes/${id}`)
+            .then(res => res.data.data)
             .catch(Server.useOriginalErrorMessage);
     }
 

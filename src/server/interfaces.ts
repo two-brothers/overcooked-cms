@@ -22,7 +22,13 @@ export interface IUnitConversion {
 
 export interface IPagedRecipes {
     recipes: IRecipe[];
+    food: IFood[];
     last_page: boolean;
+}
+
+export interface IAugmentedRecipe {
+    recipe: IRecipe;
+    food: IFood[];
 }
 
 export interface INewRecipe {

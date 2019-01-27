@@ -39,6 +39,22 @@ const initFoodPage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>,
         .then(() => undefined);
 
 /**
+ * Retrieve the specified food item and dispatch UPDATE_ITEMS when the record is returned.
+ * Dispatch an error for any unexpected server response.
+ * @param id the id of the food item
+ */
+export const getFood = (id: string) => (dispatch: Dispatch<ReplaceItems | AddError>, getState: () => IGlobalState) =>
+    getState().food[id] ?
+        Promise.resolve(undefined) : // if the item already exists in the store, don't fetch it
+        Server.getFood(id)
+            .then(res => dispatch({
+                items: [res],
+                type: ActionNames.REPLACE_ITEMS
+            }))
+            .catch(err => recordError(err)(dispatch))
+            .then(() => undefined);
+
+/**
  * Send the item to the server for creation, and dispatch UPDATE_ITEMS when the new record is returned.
  * Dispatch an error for any unexpected server response.
  * @param item the new food item. This function does not validate the structure of the item

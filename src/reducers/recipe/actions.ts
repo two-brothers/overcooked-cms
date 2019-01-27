@@ -3,6 +3,7 @@ import { INewRecipe } from '../../server/interfaces';
 import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
+import { IGlobalState } from '../index';
 import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types';
 
 /**
@@ -26,6 +27,22 @@ const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | AddError
         })
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);
+
+/**
+ * Retrieve the specified recipe and dispatch UPDATE_ITEMS when the record is returned.
+ * Dispatch an error for any unexpected server response.
+ * @param id the id of the food item
+ */
+export const getRecipe = (id: string) => (dispatch: Dispatch<ReplaceItems | AddError>, getState: () => IGlobalState) =>
+    getState().recipes[id] ?
+        Promise.resolve(undefined) : // if the recipe already exists in the store, don't fetch it
+        Server.getRecipe(id)
+            .then(res => dispatch({
+                items: [res.recipe],
+                type: ActionNames.REPLACE_ITEMS
+            }))
+            .catch(err => recordError(err)(dispatch))
+            .then(() => undefined);
 
 /**
  * Send the item to the server for creation, and dispatch REPLACE_ITEMS when the new record is returned

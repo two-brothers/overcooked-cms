@@ -14,7 +14,7 @@ import { IUnitSelection } from './FoodRecord';
  */
 class UnitsSelector extends SubComponent<IProps, IState> {
     public render(): JSX.Element {
-        const { selections } = this.state.unit;
+        const { selections } = this.state;
         const { readOnly } = this.props;
 
         return (
@@ -58,7 +58,7 @@ class UnitsSelector extends SubComponent<IProps, IState> {
      * @param id the unit id
      */
     private toggleSelected = (id: number) => () => this.setState((state: IState) => ({
-        unit: NestedUtility.toggleNested(state.unit, `selections[${id}].selected`)
+        selections: NestedUtility.toggleNested(state, `selections[${id}].selected`).selections
     }));
 
     /**
@@ -67,7 +67,9 @@ class UnitsSelector extends SubComponent<IProps, IState> {
      */
     private onQuantityChange = (id: number) => (e: ChangeEvent<HTMLInputElement>) => {
         const value = String(e.target.value); // cache the result before React's Synthetic Handler clears it
-        this.setState((state: IState) => ({unit: NestedUtility.replaceField<string>(state.unit, `selections[${id}].quantity`, value)}));
+        this.setState((state: IState) => ({
+            selections: NestedUtility.replaceField<string>(state, `selections[${id}].quantity`, value).selections
+        }));
     };
 
     /**
@@ -77,7 +79,7 @@ class UnitsSelector extends SubComponent<IProps, IState> {
      * @param id the unit id
      */
     private measurement = (id: number) => {
-        return Number(this.state.unit.selections[id].quantity) === 1 ?
+        return Number(this.state.selections[id].quantity) === 1 ?
             `${this.props.units[id].singular} ${this.props.singular ? this.props.singular : '[item]'}` :
             `${this.props.units[id].plural} ${this.props.plural ? this.props.plural : '[items]'}`;
     };
@@ -91,9 +93,7 @@ interface IProps {
 }
 
 export interface IState {
-    unit: {
-        selections: IUnitSelection[]
-    };
+    selections: IUnitSelection[]
 }
 
 const mapStateToProps = (state: IGlobalState) => ({

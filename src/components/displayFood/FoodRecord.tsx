@@ -48,7 +48,7 @@ class FoodRecord extends Component<IProps> {
                                    inputProps={{readOnly: !authenticated}}
                         />
 
-                        <UnitsSelector state={{unit: {selections}}}
+                        <UnitsSelector state={{selections}}
                                        propagate={this.updateUnitSelection}
                                        singular={singular}
                                        plural={plural}
@@ -148,7 +148,7 @@ class FoodRecord extends Component<IProps> {
      * @param updateFn the function called on the UnitsSelector to update it own state
      */
     private updateUnitSelection = (updateFn: (childState: IUSState) => Partial<IUSState>) =>
-        this.setState((state: IState) => updateFn({unit: {selections: state.selections}}).unit);
+        this.setState((state: IState) => updateFn({selections: state.selections}));
 
     /**
      * Returns a boolean indicating whether the component describes a valid food item

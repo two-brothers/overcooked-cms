@@ -3,19 +3,26 @@ import { INewRecipe } from '../../server/interfaces';
 import Server from '../../server/server';
 import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
+import { ActionNames as FoodActionNames, ReplaceItems as ReplaceFoodItems } from '../food/action.types';
 import { IGlobalState } from '../index';
 import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types';
 
 /**
- * Retrieve all the recipe items, one page at a time, and dispatch REPLACE_ITEMS as each page is retrieved.
+ * Retrieve all the recipe items, one page at a time, and dispatch REPLACE_ITEMS (on the food and recipes)
+ * as each page is retrieved.
  * Dispatch an error for any unexpected server response.
  */
-export const initRecipes = () => (dispatch: Dispatch<ReplaceItems | AddError>) =>
+export const initRecipes = () => (dispatch: Dispatch<ReplaceItems | ReplaceFoodItems | AddError>) =>
     initRecipePage(0, dispatch);
 
-const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>): Promise<undefined> =>
+const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | ReplaceFoodItems | AddError>): Promise<undefined> =>
     Server.getRecipePage(page)
         .then(res => {
+            dispatch({
+                items: res.food,
+                type: FoodActionNames.REPLACE_ITEMS
+            });
+
             dispatch({
                 items: res.recipes,
                 type: ActionNames.REPLACE_ITEMS
@@ -33,14 +40,21 @@ const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | AddError
  * Dispatch an error for any unexpected server response.
  * @param id the id of the food item
  */
-export const getRecipe = (id: string) => (dispatch: Dispatch<ReplaceItems | AddError>, getState: () => IGlobalState) =>
+export const getRecipe = (id: string) => (dispatch: Dispatch<ReplaceItems | ReplaceFoodItems | AddError>, getState: () => IGlobalState) =>
     getState().recipes[id] ?
         Promise.resolve(undefined) : // if the recipe already exists in the store, don't fetch it
         Server.getRecipe(id)
-            .then(res => dispatch({
-                items: [res.recipe],
-                type: ActionNames.REPLACE_ITEMS
-            }))
+            .then(res => {
+                dispatch({
+                    items: res.food,
+                    type: FoodActionNames.REPLACE_ITEMS
+                });
+
+                dispatch({
+                    items: [res.recipe],
+                    type: ActionNames.REPLACE_ITEMS
+                });
+            })
             .catch(err => recordError(err)(dispatch))
             .then(() => undefined);
 

@@ -6,34 +6,23 @@ import { AddError } from '../errors/action.types';
 import { recordError } from '../errors/actions';
 import { IGlobalState } from '../index';
 import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types';
-import { IState } from './reducer';
 
 /**
  * Retrieve all the food items, one page at a time, and dispatch UPDATE_ITEMS as each page is retrieved.
- * If any of the retrieved items are already in the database, dispatch an error (and do not update the affected items).
  * Dispatch an error for any unexpected server response.
  */
-export const initFood = () => (dispatch: Dispatch<ReplaceItems | AddError>, getState: () => IGlobalState) =>
-    initFoodPage(0, dispatch, getState);
+export const initFood = () => (dispatch: Dispatch<ReplaceItems | AddError>) =>
+    initFoodPage(0, dispatch);
 
-const initFoodPage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>, getState: () => IGlobalState): Promise<undefined> =>
+const initFoodPage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>): Promise<undefined> =>
     Server.getFoodPage(page)
         .then(res => {
-            const state: IState = getState().food;
-            const newFoods = res.food.filter(f => state[f.id] === undefined);
-            const existingFoods = res.food.filter(f => state[f.id] !== undefined);
-
             dispatch({
-                items: newFoods,
+                items: res.food,
                 type: ActionNames.REPLACE_ITEMS
             });
 
-            return Promise.all([
-                ...existingFoods.map(duplicate =>
-                    recordError(new Error(`Cannot add food item ${duplicate.id}. It already exists`))(dispatch)
-                ),
-                res.last_page ? Promise.resolve(undefined) : initFoodPage(page + 1, dispatch, getState)
-            ]);
+            return res.last_page ? Promise.resolve(undefined) : initFoodPage(page + 1, dispatch);
         })
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined);

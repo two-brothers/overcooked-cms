@@ -36,7 +36,7 @@ class Container extends Component<IProps> {
                 <AppBar />
                 <BrowserRouter>
                     <Switch>
-                        <Route exact={ true } path={ '/' } component={ Home } />
+                        <Route exact={ true } path={ '/cms' } component={ Home } />
                         <Route exact={ true } path={ '/cms/food/new' } component={ FoodRecord } />
                         <Route exact={ true } path={ '/cms/food/:id?' } component={ FoodRecord } />
                         <Route exact={ true } path={ '/cms/recipe/new' } component={ RecipeRecord } />

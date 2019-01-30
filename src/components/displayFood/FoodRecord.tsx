@@ -149,10 +149,12 @@ class FoodRecord extends Component<IProps> {
         if (id) {
             const update = Utility.subtract(newItem, this.props.food[id]);
             if (Object.getOwnPropertyNames(update).length > 0) {
-                this.props.updateFood(id, update);
+                this.props.updateFood(id, update)
+                    .catch(() => null);
             }
         } else {
-            this.props.createFood(newItem);
+            this.props.createFood(newItem)
+                .catch(() => null);
         }
     };
 
@@ -188,7 +190,7 @@ class FoodRecord extends Component<IProps> {
      * this.props.deleteFood with the recipe id.
      * This function simply adds a layer of indirection to get the call signatures to match
      */
-    private deleteFood = (id: string) => () => this.props.deleteFood(id);
+    private deleteFood = (id: string) => () => this.props.deleteFood(id).catch(() => null);
 }
 
 enum RetrievalStatus {

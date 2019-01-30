@@ -212,10 +212,12 @@ class RecipeRecord extends Component<IProps> {
         if (id) {
             const update = Utility.subtract(newRecipe, recipes[id]);
             if (Object.getOwnPropertyNames(update).length > 0) {
-                this.props.updateRecipe(id, update);
+                this.props.updateRecipe(id, update)
+                    .catch(() => null);
             }
         } else {
-            this.props.createRecipe(newRecipe);
+            this.props.createRecipe(newRecipe)
+                .catch(() => null);
         }
     };
 
@@ -308,7 +310,7 @@ class RecipeRecord extends Component<IProps> {
      * this.props.deleteRecipe with the recipe id.
      * This function simply adds a layer of indirection to get the call signatures to match
      */
-    private deleteRecipe = (id: string) => () => this.props.deleteRecipe(id);
+    private deleteRecipe = (id: string) => () => this.props.deleteRecipe(id).catch(() => null);
 }
 
 /**

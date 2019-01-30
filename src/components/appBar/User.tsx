@@ -17,7 +17,7 @@ class User extends Component<IProps> {
                 {profile ?
                     <div>
                         <span>{profile}</span>
-                        <Button onClick={this.props.logOut} color="inherit">Sign Out</Button>
+                        <Button onClick={this.logOut} color="inherit">Sign Out</Button>
                     </div>
                     :
                     <a href={'/auth/github'}>Sign In</a>
@@ -25,6 +25,11 @@ class User extends Component<IProps> {
             </div>
         );
     }
+
+    /**
+     * Log the user out and suppress any errors
+     */
+    private logOut = () => this.props.logOut().catch(() => null);
 }
 
 interface IProps {

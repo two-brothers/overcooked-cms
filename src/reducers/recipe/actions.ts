@@ -1,11 +1,11 @@
-import { Dispatch } from 'redux';
-import { INewRecipe } from '../../server/interfaces';
-import Server from '../../server/server';
-import { AddError } from '../errors/action.types';
-import { recordError } from '../errors/actions';
-import { ActionNames as FoodActionNames, ReplaceItems as ReplaceFoodItems } from '../food/action.types';
-import { IGlobalState } from '../index';
-import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types';
+import { Dispatch } from 'redux'
+import { INewRecipe } from '../../server/interfaces'
+import Server from '../../server/server'
+import { AddError } from '../errors/action.types'
+import { recordError } from '../errors/actions'
+import { ActionNames as FoodActionNames, ReplaceItems as ReplaceFoodItems } from '../food/action.types'
+import { IGlobalState } from '../index'
+import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types'
 
 /**
  * Retrieve all the recipe items, one page at a time, and dispatch REPLACE_ITEMS (on the food and recipes)
@@ -13,7 +13,7 @@ import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.type
  * Dispatch an error for any unexpected server response.
  */
 export const initRecipes = () => (dispatch: Dispatch<ReplaceItems | ReplaceFoodItems | AddError>) =>
-    initRecipePage(0, dispatch);
+    initRecipePage(0, dispatch)
 
 const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | ReplaceFoodItems | AddError>): Promise<undefined> =>
     Server.getRecipePage(page)
@@ -21,19 +21,19 @@ const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | ReplaceF
             dispatch({
                 items: res.food,
                 type: FoodActionNames.REPLACE_ITEMS
-            });
+            })
 
             dispatch({
                 items: res.recipes,
                 type: ActionNames.REPLACE_ITEMS
-            });
+            })
 
             return res.last_page ?
                 Promise.resolve(undefined) :
-                initRecipePage(page + 1, dispatch);
+                initRecipePage(page + 1, dispatch)
         })
         .catch(err => recordError(err)(dispatch))
-        .then(() => undefined);
+        .then(() => undefined)
 
 /**
  * Retrieve the specified recipe and dispatch UPDATE_ITEMS when the record is returned.
@@ -48,15 +48,15 @@ export const getRecipe = (id: string) => (dispatch: Dispatch<ReplaceItems | Repl
                 dispatch({
                     items: res.food,
                     type: FoodActionNames.REPLACE_ITEMS
-                });
+                })
 
                 dispatch({
                     items: [res.recipe],
                     type: ActionNames.REPLACE_ITEMS
-                });
+                })
             })
             .catch(err => recordError(err)(dispatch))
-            .then(() => undefined);
+            .then(() => undefined)
 
 /**
  * Send the item to the server for creation, and dispatch REPLACE_ITEMS when the new record is returned
@@ -70,7 +70,7 @@ export const createRecipe = (item: INewRecipe) => (dispatch: Dispatch<ReplaceIte
             type: ActionNames.REPLACE_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))
-        .then(() => undefined);
+        .then(() => undefined)
 
 /**
  * Request that the specified recipe be deleted from the server, and dispatch REMOVE_ITEM if successful.
@@ -84,7 +84,7 @@ export const deleteRecipe = (id: string) => (dispatch: Dispatch<RemoveItem | Add
             type: ActionNames.REMOVE_ITEM
         }))
         .catch(err => recordError(err)(dispatch))
-        .then(() => undefined);
+        .then(() => undefined)
 
 /**
  * Request that the specified recipe be updated with the specified values, and dispatch UPDATE_ITEM if successful.
@@ -100,4 +100,4 @@ export const updateRecipe = (id: string, update: Partial<INewRecipe>) => (dispat
             update
         }))
         .catch(err => recordError(err)(dispatch))
-        .then(() => undefined);
+        .then(() => undefined)

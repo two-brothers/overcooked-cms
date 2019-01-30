@@ -1,4 +1,4 @@
-import { Action, ActionNames } from './action.types';
+import { Action, ActionNames } from './action.types'
 
 export interface IState {
     profile: string | null
@@ -12,14 +12,14 @@ export interface IState {
 export default function (state = initialState, action: Action) {
     switch (action.type) {
         case ActionNames.SET_USER:
-            return {profile: action.profile};
+            return { profile: action.profile }
         case ActionNames.CLEAR_USER:
-            return {profile: null};
+            return { profile: null }
         default:
-            return state;
+            return state
     }
 }
 
 const initialState: IState = {
     profile: null
-};
+}

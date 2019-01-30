@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component } from 'react'
 
 /**
  * A an abstract class to interact with a fraction of the state in the parent component.
@@ -13,19 +13,19 @@ import { Component } from 'react';
  * The setLocalState function can be used for changes that do not affect the parent
  */
 class SubComponent<IPassedProps, IState> extends Component<IPassedProps & IProps<IState>> {
-    public state = this.props.state;
+    public state = this.props.state
 
-    public setLocalState = super.setState;
+    public setLocalState = super.setState
 
     public setState(updateFn: (state: IState) => Partial<IState>) {
-        super.setState(updateFn);
-        this.props.propagate(updateFn);
+        super.setState(updateFn)
+        this.props.propagate(updateFn)
     }
 }
 
 interface IProps<IState> {
-    state: IState;
+    state: IState
     propagate: (updateFn: (state: IState) => Partial<IState>) => void
 }
 
-export default SubComponent;
+export default SubComponent

@@ -1,5 +1,5 @@
-import { IRecipe } from '../../server/interfaces';
-import { Action, ActionNames } from './action.types';
+import { IRecipe } from '../../server/interfaces'
+import { Action, ActionNames } from './action.types'
 
 export interface IState {
     [id: string]: IRecipe
@@ -17,21 +17,21 @@ export interface IState {
 export default function (state = initialState, action: Action) {
     switch (action.type) {
         case ActionNames.REPLACE_ITEMS:
-            const updates = {};
+            const updates = {}
             action.items.map(item => {
-                updates[item.id] = item;
-            });
-            return Object.assign({}, state, updates);
+                updates[item.id] = item
+            })
+            return Object.assign({}, state, updates)
         case ActionNames.REMOVE_ITEM:
-            const updated = Object.assign({}, state);
-            delete updated[action.id];
-            return updated;
+            const updated = Object.assign({}, state)
+            delete updated[action.id]
+            return updated
         case ActionNames.UPDATE_ITEM:
-            const recipe = Object.assign({}, state[action.id], action.update);
-            return Object.assign({}, state, {[action.id]: recipe});
+            const recipe = Object.assign({}, state[action.id], action.update)
+            return Object.assign({}, state, { [action.id]: recipe })
         default:
-            return state;
+            return state
     }
-};
+}
 
-const initialState: IState = {};
+const initialState: IState = {}

@@ -1,92 +1,92 @@
-import { Button, TextField, Typography } from '@material-ui/core';
-import * as React from 'react';
-import { ChangeEvent, Component, FormEvent } from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
+import { Button, TextField, Typography } from '@material-ui/core'
+import * as React from 'react'
+import { ChangeEvent, Component, FormEvent } from 'react'
+import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router'
 
-import { IGlobalState } from '../../reducers';
-import { createFood, deleteFood, getFood, updateFood } from '../../reducers/food/actions';
-import { IState as IFoodState } from '../../reducers/food/reducer';
-import { IState as IUnits } from '../../reducers/units/reducer';
-import { INewFood } from '../../server/interfaces';
-import DeleteRecord from '../DeleteRecord';
-import { Utility } from '../utility';
-import UnitsSelector, { IState as IUSState } from './UnitsSelector';
+import { IGlobalState } from '../../reducers'
+import { createFood, deleteFood, getFood, updateFood } from '../../reducers/food/actions'
+import { IState as IFoodState } from '../../reducers/food/reducer'
+import { IState as IUnits } from '../../reducers/units/reducer'
+import { INewFood } from '../../server/interfaces'
+import DeleteRecord from '../DeleteRecord'
+import { Utility } from '../utility'
+import UnitsSelector, { IState as IUSState } from './UnitsSelector'
 
 /**
  * A class to create or update a Food Record
  */
 class FoodRecord extends Component<IProps> {
-    public state: IState = this.initState();
+    public state: IState = this.initState()
 
     public componentDidMount(): void {
-        const id = this.props.match.params.id;
+        const id = this.props.match.params.id
         if (id && !this.props.food[id]) {
             this.props.getFood(id)
                 .then(() => this.setState(() => this.initState()))
-                .catch(() => this.setState(() => ({status: RetrievalStatus.UNAVAILABLE})));
+                .catch(() => this.setState(() => ({ status: RetrievalStatus.UNAVAILABLE })))
         }
     }
 
     public render(): JSX.Element {
-        const {singular, plural, id, selections, status} = this.state;
-        const {authenticated} = this.props;
-        const action = id ? 'update' : 'create';
+        const { singular, plural, id, selections, status } = this.state
+        const { authenticated } = this.props
+        const action = id ? 'update' : 'create'
 
         switch (status) {
             case RetrievalStatus.RETRIEVING:
-                return <h2>Retrieving Record...</h2>;
+                return <h2>Retrieving Record...</h2>
             case RetrievalStatus.UNAVAILABLE:
-                return <h2>Record Unavailable</h2>;
+                return <h2>Record Unavailable</h2>
             case RetrievalStatus.AVAILABLE:
                 return (
-                    <Typography component={'div'}>
-                        <h2>{singular.toUpperCase()} {id ? `( ${id} )` : null}</h2>
-                        <form onSubmit={this.onSubmit}>
-                            <TextField label={'singular'}
-                                       value={singular}
-                                       onChange={this.onInputChange('singular')}
-                                       required={true}
-                                       fullWidth={true}
-                                       margin={'normal'}
-                                       inputProps={{readOnly: !authenticated}}
+                    <Typography component={ 'div' }>
+                        <h2>{ singular.toUpperCase() } { id ? `( ${ id } )` : null }</h2>
+                        <form onSubmit={ this.onSubmit }>
+                            <TextField label={ 'singular' }
+                                       value={ singular }
+                                       onChange={ this.onInputChange('singular') }
+                                       required={ true }
+                                       fullWidth={ true }
+                                       margin={ 'normal' }
+                                       inputProps={ { readOnly: !authenticated } }
                             />
 
-                            <TextField label={'plural'}
-                                       value={plural}
-                                       onChange={this.onInputChange('plural')}
-                                       required={true}
-                                       fullWidth={true}
-                                       margin={'normal'}
-                                       inputProps={{readOnly: !authenticated}}
+                            <TextField label={ 'plural' }
+                                       value={ plural }
+                                       onChange={ this.onInputChange('plural') }
+                                       required={ true }
+                                       fullWidth={ true }
+                                       margin={ 'normal' }
+                                       inputProps={ { readOnly: !authenticated } }
                             />
 
-                            <UnitsSelector state={{selections}}
-                                           propagate={this.updateUnitSelection}
-                                           singular={singular}
-                                           plural={plural}
-                                           readOnly={!authenticated}
+                            <UnitsSelector state={ { selections } }
+                                           propagate={ this.updateUnitSelection }
+                                           singular={ singular }
+                                           plural={ plural }
+                                           readOnly={ !authenticated }
                             />
 
-                            {authenticated ?
+                            { authenticated ?
                                 <React.Fragment>
-                                    <Button type={'submit'}
-                                            disabled={!this.valid()}
-                                            color={'primary'}>
-                                        {action.toUpperCase()}
+                                    <Button type={ 'submit' }
+                                            disabled={ !this.valid() }
+                                            color={ 'primary' }>
+                                        { action.toUpperCase() }
                                     </Button>
-                                    {id ?
-                                        <DeleteRecord id={id} onDelete={this.deleteFood(id)} /> :
+                                    { id ?
+                                        <DeleteRecord id={ id } onDelete={ this.deleteFood(id) } /> :
                                         null
                                     }
                                 </React.Fragment> :
-                                <p>{`Please sign in to ${action} the record`}</p>
+                                <p>{ `Please sign in to ${ action } the record` }</p>
                             }
                         </form>
                     </Typography>
-                );
+                )
             default:
-                return <h2>Internal Error on Food Record component</h2>;
+                return <h2>Internal Error on Food Record component</h2>
         }
     }
 
@@ -95,11 +95,11 @@ class FoodRecord extends Component<IProps> {
      * and use it to initialise the state. Otherwise, create a blank record.
      */
     private initState(): IState {
-        const id = this.props.match.params.id;
+        const id = this.props.match.params.id
         const selections = this.props.units.map(() => ({
             quantity: 1,
             selected: false
-        }));
+        }))
 
         const state: IState = {
             id,
@@ -107,24 +107,24 @@ class FoodRecord extends Component<IProps> {
             selections,
             singular: '',
             status: RetrievalStatus.AVAILABLE
-        };
+        }
 
         if (id) {
-            const food = this.props.food[id];
+            const food = this.props.food[id]
             if (food) {
                 food.conversions.map(conv => {
-                    selections[conv.unit_id].selected = true;
-                    selections[conv.unit_id].quantity = conv.ratio;
-                });
-                state.singular = food.name.singular;
-                state.plural = food.name.plural;
+                    selections[conv.unit_id].selected = true
+                    selections[conv.unit_id].quantity = conv.ratio
+                })
+                state.singular = food.name.singular
+                state.plural = food.name.plural
             } else {
-                state.status = RetrievalStatus.RETRIEVING;
+                state.status = RetrievalStatus.RETRIEVING
             }
         }
 
-        return state;
-    };
+        return state
+    }
 
     /**
      * Package the component state into a new food item (or partial food
@@ -133,8 +133,8 @@ class FoodRecord extends Component<IProps> {
      * @param e the form submission event
      */
     private onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const {id, singular, plural, selections} = this.state;
+        e.preventDefault()
+        const { id, singular, plural, selections } = this.state
 
         const newItem: INewFood = {
             conversions: selections.map((_, unitID) => unitID)
@@ -143,20 +143,20 @@ class FoodRecord extends Component<IProps> {
                     ratio: Number(selections[unitID].quantity),
                     unit_id: unitID
                 })),
-            name: {plural, singular}
-        };
+            name: { plural, singular }
+        }
 
         if (id) {
-            const update = Utility.subtract(newItem, this.props.food[id]);
+            const update = Utility.subtract(newItem, this.props.food[id])
             if (Object.getOwnPropertyNames(update).length > 0) {
                 this.props.updateFood(id, update)
-                    .catch(() => null);
+                    .catch(() => null)
             }
         } else {
             this.props.createFood(newItem)
-                .catch(() => null);
+                .catch(() => null)
         }
-    };
+    }
 
 
     /**
@@ -164,7 +164,7 @@ class FoodRecord extends Component<IProps> {
      * @param property a first-level property on the component state
      */
     private onInputChange = (property: string) => (e: ChangeEvent<HTMLInputElement>) =>
-        this.setState({[property]: e.target.value});
+        this.setState({ [property]: e.target.value })
 
     /**
      * This function will be called by UnitsSelector whenever its own state changes.
@@ -172,25 +172,25 @@ class FoodRecord extends Component<IProps> {
      * @param updateFn the function called on the UnitsSelector to update it own state
      */
     private updateUnitSelection = (updateFn: (childState: IUSState) => Partial<IUSState>) =>
-        this.setState((state: IState) => updateFn({selections: state.selections}));
+        this.setState((state: IState) => updateFn({ selections: state.selections }))
 
     /**
      * Returns a boolean indicating whether the component describes a valid food item
      */
     private valid = () => {
-        const {singular, plural, selections} = this.state;
+        const { singular, plural, selections } = this.state
         return singular.length > 0 &&
             plural.length > 0 &&
             selections.filter(unit => unit.selected).length > 0 &&
-            selections.filter(unit => unit.selected && Number(unit.quantity) <= 0).length === 0;
-    };
+            selections.filter(unit => unit.selected && Number(unit.quantity) <= 0).length === 0
+    }
 
     /**
      * The DeleteRecord component expects a function with no arguments, but we need to call
      * this.props.deleteFood with the recipe id.
      * This function simply adds a layer of indirection to get the call signatures to match
      */
-    private deleteFood = (id: string) => () => this.props.deleteFood(id).catch(() => null);
+    private deleteFood = (id: string) => () => this.props.deleteFood(id).catch(() => null)
 }
 
 enum RetrievalStatus {
@@ -200,32 +200,32 @@ enum RetrievalStatus {
 }
 
 interface IState {
-    id: string | null;
-    plural: string;
-    singular: string;
-    selections: IUnitSelection[];
-    status: RetrievalStatus;
+    id: string | null
+    plural: string
+    singular: string
+    selections: IUnitSelection[]
+    status: RetrievalStatus
 }
 
 export interface IUnitSelection {
-    quantity: number;
-    selected: boolean;
+    quantity: number
+    selected: boolean
 }
 
 type IProps = RouteComponentProps<{ id: string }> & {
-    authenticated: boolean;
-    food: IFoodState;
-    units: IUnits;
-    createFood: (item: INewFood) => Promise<undefined>;
-    deleteFood: (id: string) => Promise<undefined>;
-    getFood: (id: string) => Promise<undefined>;
-    updateFood: (id: string, item: Partial<INewFood>) => Promise<undefined>;
+    authenticated: boolean
+    food: IFoodState
+    units: IUnits
+    createFood: (item: INewFood) => Promise<undefined>
+    deleteFood: (id: string) => Promise<undefined>
+    getFood: (id: string) => Promise<undefined>
+    updateFood: (id: string, item: Partial<INewFood>) => Promise<undefined>
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
     authenticated: state.user.profile !== null,
     food: state.food,
     units: state.units
-});
+})
 
-export default connect(mapStateToProps, {createFood, deleteFood, getFood, updateFood})(FoodRecord);
+export default connect(mapStateToProps, { createFood, deleteFood, getFood, updateFood })(FoodRecord)

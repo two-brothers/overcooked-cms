@@ -1,5 +1,5 @@
-import { Dispatch } from 'redux';
-import { ActionNames, AddError } from './action.types';
+import { Dispatch } from 'redux'
+import { ActionNames, AddError } from './action.types'
 
 /**
  * Dispatch the AddError action to add the specified error to the state,
@@ -13,8 +13,8 @@ export const recordError = (err: Error) => (dispatch: Dispatch<AddError>) =>
     })
         .then(action => dispatch(action))
         .then(() => {
-            throw err;
-        });
+            throw err
+        })
 
 
 

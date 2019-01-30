@@ -1,6 +1,6 @@
-import { Action, ActionNames } from './action.types';
+import { Action, ActionNames } from './action.types'
 
-export type IState = Error[];
+export type IState = Error[]
 
 /**
  * Handle the ADD_ERROR action (by adding the error to the state)
@@ -14,10 +14,10 @@ export default function (state = initialState, action: Action) {
             return [
                 ...state,
                 action.error
-            ];
+            ]
         default:
-            return state;
+            return state
     }
-};
+}
 
-const initialState: IState = [];
+const initialState: IState = []

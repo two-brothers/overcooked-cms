@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 import { IAugmentedRecipe, IFood, INewFood, INewRecipe, IPagedFood, IPagedRecipes, IRecipe } from './interfaces'
 
 /**
@@ -15,7 +15,7 @@ class Server {
     public static getActiveUser(): Promise<string | null> {
         return axios.get('/auth/whoami')
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -24,7 +24,7 @@ class Server {
     public static logOut(): Promise<void> {
         return axios.get('/auth/logout')
             .then(() => undefined)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -32,9 +32,9 @@ class Server {
      * @param id the id of the food item
      */
     public static getFood(id: string): Promise<IFood> {
-        return axios.get(`/food/${id}`)
+        return axios.get(`/food/${ id }`)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -42,9 +42,9 @@ class Server {
      * @param page the index of the page to retrieve
      */
     public static getFoodPage(page: number): Promise<IPagedFood> {
-        return axios.get(`/food/at/${String(page)}`)
+        return axios.get(`/food/at/${ String(page) }`)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -54,7 +54,7 @@ class Server {
     public static createFood(item: INewFood): Promise<IFood> {
         return axios.post(`/food`, item)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -63,9 +63,9 @@ class Server {
      * @param update the partial food item with the updated values
      */
     public static updateFood(id: string, update: Partial<INewFood>): Promise<IFood> {
-        return axios.put(`/food/${id}`, update)
+        return axios.put(`/food/${ id }`, update)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -73,9 +73,9 @@ class Server {
      * @param id the id of the food item to delete
      */
     public static deleteFood(id: string): Promise<void> {
-        return axios.delete(`/food/${id}`)
+        return axios.delete(`/food/${ id }`)
             .then(() => undefined)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -83,9 +83,9 @@ class Server {
      * @param id the id of the recipe item
      */
     public static getRecipe(id: string): Promise<IAugmentedRecipe> {
-        return axios.get(`/recipes/${id}`)
+        return axios.get(`/recipes/${ id }`)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -93,9 +93,9 @@ class Server {
      * @param page the index of the page to retrieve
      */
     public static getRecipePage(page: number): Promise<IPagedRecipes> {
-        return axios.get(`/recipes/at/${String(page)}`)
+        return axios.get(`/recipes/at/${ String(page) }`)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -105,7 +105,7 @@ class Server {
     public static createRecipe(item: INewRecipe): Promise<IRecipe> {
         return axios.post(`/recipes`, item)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -114,9 +114,9 @@ class Server {
      * @param update the partial recipe with the updated values
      */
     public static updateRecipe(id: string, update: Partial<INewRecipe>): Promise<IRecipe> {
-        return axios.put(`/recipes/${id}`, update)
+        return axios.put(`/recipes/${ id }`, update)
             .then(res => res.data.data)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -124,9 +124,9 @@ class Server {
      * @param id the id of the recipe to delete
      */
     public static deleteRecipe(id: string): Promise<void> {
-        return axios.delete(`/recipes/${id}`)
+        return axios.delete(`/recipes/${ id }`)
             .then(() => undefined)
-            .catch(Server.useOriginalErrorMessage);
+            .catch(Server.useOriginalErrorMessage)
     }
 
     /**
@@ -136,18 +136,18 @@ class Server {
      */
     private static useOriginalErrorMessage(err: IOvercookedError) {
         if (err.response && err.response.data && err.response.data.error) {
-            throw new Error(err.response.data.error);
+            throw new Error(err.response.data.error)
         }
-        throw err;
-    };
+        throw err
+    }
 }
 
 interface IOvercookedError extends Error {
     response: {
         data: {
             error: string
-        };
+        }
     }
 }
 
-export default Server;
+export default Server

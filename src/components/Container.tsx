@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import * as React from 'react'
+import { Component } from 'react'
+import { connect } from 'react-redux'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
-import { initFood } from '../reducers/food/actions';
-import { initRecipes } from '../reducers/recipe/actions';
-import { retrieveUser } from '../reducers/user/actions';
-import AppBar from './appBar/AppBar';
-import FoodRecord from './displayFood/FoodRecord';
-import RecipeRecord from './displayRecipe/RecipeRecord';
-import Home from './Home';
+import { initFood } from '../reducers/food/actions'
+import { initRecipes } from '../reducers/recipe/actions'
+import { retrieveUser } from '../reducers/user/actions'
+import AppBar from './appBar/AppBar'
+import FoodRecord from './displayFood/FoodRecord'
+import RecipeRecord from './displayRecipe/RecipeRecord'
+import Home from './Home'
 
 /**
  * A wrapper for the UI components.
@@ -27,31 +27,31 @@ class Container extends Component<IProps> {
             this.props.initRecipes(),
             this.props.initFood(),
             this.props.retrieveUser()
-        ]).catch(() => null);
+        ]).catch(() => null)
     }
 
     public render(): JSX.Element {
         return (
             <div>
-                <AppBar/>
+                <AppBar />
                 <BrowserRouter>
                     <Switch>
-                        <Route exact={true} path={'/'} component={Home}/>
-                        <Route exact={true} path={'/cms/food/new'} component={FoodRecord}/>
-                        <Route exact={true} path={'/cms/food/:id?'} component={FoodRecord}/>
-                        <Route exact={true} path={'/cms/recipe/new'} component={RecipeRecord}/>
-                        <Route exact={true} path={'/cms/recipe/:id?'} component={RecipeRecord}/>
+                        <Route exact={ true } path={ '/' } component={ Home } />
+                        <Route exact={ true } path={ '/cms/food/new' } component={ FoodRecord } />
+                        <Route exact={ true } path={ '/cms/food/:id?' } component={ FoodRecord } />
+                        <Route exact={ true } path={ '/cms/recipe/new' } component={ RecipeRecord } />
+                        <Route exact={ true } path={ '/cms/recipe/:id?' } component={ RecipeRecord } />
                     </Switch>
                 </BrowserRouter>
             </div>
-        );
-    };
+        )
+    }
 }
 
 interface IProps {
-    initFood: () => Promise<undefined>;
-    initRecipes: () => Promise<undefined>;
-    retrieveUser: () => Promise<undefined>;
+    initFood: () => Promise<undefined>
+    initRecipes: () => Promise<undefined>
+    retrieveUser: () => Promise<undefined>
 }
 
-export default connect(null, {initFood, initRecipes, retrieveUser})(Container);
+export default connect(null, { initFood, initRecipes, retrieveUser })(Container)

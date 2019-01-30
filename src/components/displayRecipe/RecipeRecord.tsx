@@ -1,135 +1,135 @@
 import {
     Button, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Switch, TextField, Typography
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import * as React from 'react';
-import { ChangeEvent, Component, FormEvent } from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
+} from '@material-ui/core'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import * as React from 'react'
+import { ChangeEvent, Component, FormEvent } from 'react'
+import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router'
 
-import { IGlobalState } from '../../reducers';
-import { createRecipe, deleteRecipe, getRecipe, updateRecipe } from '../../reducers/recipe/actions';
-import { IState as IRecipeState } from '../../reducers/recipe/reducer';
-import { IIngredientSection, INewRecipe } from '../../server/interfaces';
-import DeleteRecord from '../DeleteRecord';
-import { Utility } from '../utility';
-import Ingredients, { IState as IIngsState } from './Ingredients';
-import RecipeMethod, { IState as IMethodState } from './RecipeMethod';
+import { IGlobalState } from '../../reducers'
+import { createRecipe, deleteRecipe, getRecipe, updateRecipe } from '../../reducers/recipe/actions'
+import { IState as IRecipeState } from '../../reducers/recipe/reducer'
+import { IIngredientSection, INewRecipe } from '../../server/interfaces'
+import DeleteRecord from '../DeleteRecord'
+import { Utility } from '../utility'
+import Ingredients, { IState as IIngsState } from './Ingredients'
+import RecipeMethod, { IState as IMethodState } from './RecipeMethod'
 
 /**
  * A class to create or update a Recipe Record
  */
 class RecipeRecord extends Component<IProps> {
-    public state: IState = this.initState();
+    public state: IState = this.initState()
 
     public componentDidMount(): void {
-        const id = this.props.match.params.id;
+        const id = this.props.match.params.id
         if (id && !this.props.recipes[id]) {
             this.props.getRecipe(id)
                 .then(() => this.setState(() => this.initState()))
-                .catch(() => this.setState(() => ({status: RetrievalStatus.UNAVAILABLE})));
+                .catch(() => this.setState(() => ({ status: RetrievalStatus.UNAVAILABLE })))
         }
     }
 
     public render(): JSX.Element {
-        const {cook_time, id, image_url, ingredient_sections, last_updated, method, prep_time, produces, reference_url, status, servesSelected, title} = this.state;
-        const {authenticated} = this.props;
-        const action = id ? 'update' : 'create';
+        const { cook_time, id, image_url, ingredient_sections, last_updated, method, prep_time, produces, reference_url, status, servesSelected, title } = this.state
+        const { authenticated } = this.props
+        const action = id ? 'update' : 'create'
 
         switch (status) {
             case RetrievalStatus.RETRIEVING:
-                return <h2>Retrieving Record...</h2>;
+                return <h2>Retrieving Record...</h2>
             case RetrievalStatus.UNAVAILABLE:
-                return <h2>Record Unavailable</h2>;
+                return <h2>Record Unavailable</h2>
             case RetrievalStatus.AVAILABLE:
                 return (
-                    <Typography component={'div'}>
-                        <h2>{title.toUpperCase()} {id ? `( ${id} )` : null}</h2>
-                        <form onSubmit={this.onSubmit}>
-                            <InputField label={'title'}
-                                        value={title}
-                                        onChange={this.onInputChange('title')}
-                                        inputProps={{readOnly: !authenticated}}
+                    <Typography component={ 'div' }>
+                        <h2>{ title.toUpperCase() } { id ? `( ${ id } )` : null }</h2>
+                        <form onSubmit={ this.onSubmit }>
+                            <InputField label={ 'title' }
+                                        value={ title }
+                                        onChange={ this.onInputChange('title') }
+                                        inputProps={ { readOnly: !authenticated } }
                             />
 
-                            <InputField label={servesSelected ? 'serves' : 'makes'}
-                                        value={produces}
-                                        onChange={this.onInputChange('produces')}
-                                        type={'number'}
-                                        inputProps={{readOnly: !authenticated, min: 1}}
+                            <InputField label={ servesSelected ? 'serves' : 'makes' }
+                                        value={ produces }
+                                        onChange={ this.onInputChange('produces') }
+                                        type={ 'number' }
+                                        inputProps={ { readOnly: !authenticated, min: 1 } }
                             />
-                            <Switch checked={this.state.servesSelected}
-                                    onChange={this.toggleProduces}
-                                    disabled={!authenticated}
-                            />
-
-                            <InputField label={'preparation time (mins)'}
-                                        value={prep_time}
-                                        onChange={this.onInputChange('prep_time')}
-                                        type={'number'}
-                                        inputProps={{readOnly: !authenticated, min: 1}}
+                            <Switch checked={ this.state.servesSelected }
+                                    onChange={ this.toggleProduces }
+                                    disabled={ !authenticated }
                             />
 
-                            <InputField label={'cooking time (mins)'}
-                                        value={cook_time}
-                                        onChange={this.onInputChange('cook_time')}
-                                        type={'number'}
-                                        inputProps={{readOnly: !authenticated, min: 1}}
+                            <InputField label={ 'preparation time (mins)' }
+                                        value={ prep_time }
+                                        onChange={ this.onInputChange('prep_time') }
+                                        type={ 'number' }
+                                        inputProps={ { readOnly: !authenticated, min: 1 } }
                             />
 
-                            <Compress heading={'Ingredients'}>
-                                <Ingredients state={{sections: ingredient_sections}}
-                                             propagate={this.updateIngredients}
-                                             authenticated={authenticated}
+                            <InputField label={ 'cooking time (mins)' }
+                                        value={ cook_time }
+                                        onChange={ this.onInputChange('cook_time') }
+                                        type={ 'number' }
+                                        inputProps={ { readOnly: !authenticated, min: 1 } }
+                            />
+
+                            <Compress heading={ 'Ingredients' }>
+                                <Ingredients state={ { sections: ingredient_sections } }
+                                             propagate={ this.updateIngredients }
+                                             authenticated={ authenticated }
                                 />
                             </Compress>
 
-                            <Compress heading={'Method'}>
-                                <RecipeMethod state={{steps: method}}
-                                              propagate={this.updateMethod}
-                                              authenticated={authenticated}
+                            <Compress heading={ 'Method' }>
+                                <RecipeMethod state={ { steps: method } }
+                                              propagate={ this.updateMethod }
+                                              authenticated={ authenticated }
                                 />
                             </Compress>
 
-                            <InputField label={'reference url'}
-                                        value={reference_url}
-                                        onChange={this.onInputChange('reference_url')}
-                                        inputProps={{readOnly: !authenticated}}
+                            <InputField label={ 'reference url' }
+                                        value={ reference_url }
+                                        onChange={ this.onInputChange('reference_url') }
+                                        inputProps={ { readOnly: !authenticated } }
                             />
 
-                            <InputField label={'image url'}
-                                        value={image_url}
-                                        onChange={this.onInputChange('image_url')}
-                                        inputProps={{readOnly: !authenticated}}
+                            <InputField label={ 'image url' }
+                                        value={ image_url }
+                                        onChange={ this.onInputChange('image_url') }
+                                        inputProps={ { readOnly: !authenticated } }
                             />
 
-                            {last_updated ?
-                                <InputField label={'last updated'}
-                                            value={(new Date(last_updated)).toLocaleString()}
-                                            inputProps={{readOnly: true}}
+                            { last_updated ?
+                                <InputField label={ 'last updated' }
+                                            value={ (new Date(last_updated)).toLocaleString() }
+                                            inputProps={ { readOnly: true } }
                                 /> :
                                 null
                             }
 
-                            {authenticated ?
+                            { authenticated ?
                                 <React.Fragment>
-                                    <Button type={'submit'}
-                                            disabled={!this.valid()}
-                                            color={'primary'}>
-                                        {action.toUpperCase()}
+                                    <Button type={ 'submit' }
+                                            disabled={ !this.valid() }
+                                            color={ 'primary' }>
+                                        { action.toUpperCase() }
                                     </Button>
-                                    {id ?
-                                        <DeleteRecord id={id} onDelete={this.deleteRecipe(id)} />
+                                    { id ?
+                                        <DeleteRecord id={ id } onDelete={ this.deleteRecipe(id) } />
                                         : null
                                     }
                                 </React.Fragment> :
-                                <p>{`Please sign in to ${action} the record`}</p>
+                                <p>{ `Please sign in to ${ action } the record` }</p>
                             }
                         </form>
                     </Typography>
-                );
+                )
             default:
-                return <h2>Internal Error on Recipe Record component</h2>;
+                return <h2>Internal Error on Recipe Record component</h2>
         }
     }
 
@@ -138,7 +138,7 @@ class RecipeRecord extends Component<IProps> {
      * or a blank record otherwise
      */
     private initState(): IState {
-        const id = this.props.match.params.id;
+        const id = this.props.match.params.id
 
         let state: IState = {
             cook_time: 1,
@@ -152,26 +152,26 @@ class RecipeRecord extends Component<IProps> {
             servesSelected: true,
             status: RetrievalStatus.AVAILABLE,
             title: ''
-        };
+        }
 
         if (id) {
-            const recipe = this.props.recipes[id];
+            const recipe = this.props.recipes[id]
             if (recipe) {
                 // this adds either 'makes' or 'serves' as an unused extraneous property
-                state = Object.assign({status: RetrievalStatus.AVAILABLE}, recipe) as IState;
-                state.servesSelected = (recipe.serves !== undefined);
-                state.produces = (state.servesSelected ? recipe.serves : recipe.makes) as number;
+                state = Object.assign({ status: RetrievalStatus.AVAILABLE }, recipe) as IState
+                state.servesSelected = (recipe.serves !== undefined)
+                state.produces = (state.servesSelected ? recipe.serves : recipe.makes) as number
                 // every heading should be defined (so it can be controlled by react)
                 state.ingredient_sections.map(section => {
-                    section.heading = section.heading ? section.heading : '';
-                });
+                    section.heading = section.heading ? section.heading : ''
+                })
             } else {
-                state.status = RetrievalStatus.RETRIEVING;
+                state.status = RetrievalStatus.RETRIEVING
             }
         }
 
-        return state;
-    };
+        return state
+    }
 
     /**
      * Package the component state into a new recipe item (or partial recipe
@@ -180,9 +180,9 @@ class RecipeRecord extends Component<IProps> {
      * @param e the form submission event
      */
     private onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const {title, servesSelected, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url, id} = this.state;
-        const {recipes} = this.props;
+        e.preventDefault()
+        const { title, servesSelected, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url, id } = this.state
+        const { recipes } = this.props
         // for ui reasons, ingredient_sections has strings instead of numbers, and empty strings instead of undefined properties
         // fix that before submission
         const sections: IIngredientSection[] = ingredient_sections.map(section =>
@@ -191,50 +191,50 @@ class RecipeRecord extends Component<IProps> {
                     ingredients: section.ingredients.map(ingredient =>
                         ingredient.ingredient_type === 'Quantified' ?
                             Object.assign(
-                                {ingredient_type: ingredient.ingredient_type, food_id: ingredient.food_id},
-                                {amount: Number(ingredient.amount)},
-                                {unit_ids: ingredient.unit_ids.map(unitID => Number(unitID))},
-                                ingredient.additional_desc ? {additional_desc: ingredient.additional_desc} : {}
+                                { ingredient_type: ingredient.ingredient_type, food_id: ingredient.food_id },
+                                { amount: Number(ingredient.amount) },
+                                { unit_ids: ingredient.unit_ids.map(unitID => Number(unitID)) },
+                                ingredient.additional_desc ? { additional_desc: ingredient.additional_desc } : {}
                             ) :
                             ingredient
                     )
                 },
-                section.heading ? {heading: section.heading} : {}
+                section.heading ? { heading: section.heading } : {}
             )
-        );
+        )
 
         const newRecipe: INewRecipe = Object.assign({},
-            {title, reference_url, image_url, method},
-            {[servesSelected ? 'serves' : 'makes']: Number(produces)},
-            {'prep_time': Number(prep_time), 'cook_time': Number(cook_time), 'ingredient_sections': sections}
-        );
+            { title, reference_url, image_url, method },
+            { [servesSelected ? 'serves' : 'makes']: Number(produces) },
+            { 'prep_time': Number(prep_time), 'cook_time': Number(cook_time), 'ingredient_sections': sections }
+        )
 
         if (id) {
-            const update = Utility.subtract(newRecipe, recipes[id]);
+            const update = Utility.subtract(newRecipe, recipes[id])
             if (Object.getOwnPropertyNames(update).length > 0) {
                 this.props.updateRecipe(id, update)
-                    .catch(() => null);
+                    .catch(() => null)
             }
         } else {
             this.props.createRecipe(newRecipe)
-                .catch(() => null);
+                .catch(() => null)
         }
-    };
+    }
 
     /**
      * Update the specified property whenever the input box changes
      * @param property a first-level property on the component state
      */
     private onInputChange = (property: string) => (e: ChangeEvent<HTMLInputElement>) => {
-        const value = String(e.target.value); // cache the result before React's Synthetic Handler clears it
-        this.setState(() => ({[property]: value}));
-    };
+        const value = String(e.target.value) // cache the result before React's Synthetic Handler clears it
+        this.setState(() => ({ [property]: value }))
+    }
 
     /**
      * Toggle whether the 'produces' value correspond to the number of items the recipe makes,
      * or the number of servings the recipe produces
      */
-    private toggleProduces = () => this.setState((state: IState) => ({servesSelected: !state.servesSelected}));
+    private toggleProduces = () => this.setState((state: IState) => ({ servesSelected: !state.servesSelected }))
 
     /**
      * Whenever the Ingredients sub-component updates its internal state,
@@ -243,9 +243,9 @@ class RecipeRecord extends Component<IProps> {
      */
     private updateIngredients = (updateFn: (ingState: IIngsState) => Partial<IIngsState>) =>
         this.setState((state: IState) => {
-            const update = updateFn({sections: state.ingredient_sections});
-            return update.sections ? {ingredient_sections: update.sections} : {};
-        });
+            const update = updateFn({ sections: state.ingredient_sections })
+            return update.sections ? { ingredient_sections: update.sections } : {}
+        })
 
     /**
      * Whenever the RecipeMethod sub-component updates its internal state,
@@ -254,20 +254,20 @@ class RecipeRecord extends Component<IProps> {
      */
     private updateMethod = (updateFn: (methodState: IMethodState) => Partial<IMethodState>) =>
         this.setState((state: IState) => {
-            const update = updateFn({steps: state.method});
-            return update.steps ? {method: update.steps} : {};
-        });
+            const update = updateFn({ steps: state.method })
+            return update.steps ? { method: update.steps } : {}
+        })
 
     /**
      * Returns a boolean indicating whether the component describes a valid recipe
      */
     private valid = () => {
-        const {title, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url} = this.state;
-        const validTitle = title && title.trim().length > 0;
+        const { title, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url } = this.state
+        const validTitle = title && title.trim().length > 0
         const validQuantities =
             Number.isInteger(Number(produces)) && Number(produces) > 0 &&
             Number.isInteger(Number(prep_time)) && Number(prep_time) > 0 &&
-            Number.isInteger(Number(cook_time)) && Number(cook_time) > 0;
+            Number.isInteger(Number(cook_time)) && Number(cook_time) > 0
         const validIngredientSections =
             ingredient_sections.length > 0 &&
             ingredient_sections.reduce((allSectionsAreValid, section) =>
@@ -296,21 +296,21 @@ class RecipeRecord extends Component<IProps> {
                         )
                     ),
                     true),
-                true);
+                true)
         const validMethod =
             method.length > 0 &&
-            method.reduce((allStepsAreValid, step) => step.trim().length > 0, true);
-        const validUrls = reference_url.trim().length > 0 && image_url.trim().length > 0;
+            method.reduce((allStepsAreValid, step) => step.trim().length > 0, true)
+        const validUrls = reference_url.trim().length > 0 && image_url.trim().length > 0
 
-        return validTitle && validQuantities && validIngredientSections && validMethod && validUrls;
-    };
+        return validTitle && validQuantities && validIngredientSections && validMethod && validUrls
+    }
 
     /**
      * The DeleteRecord component expects a function with no arguments, but we need to call
      * this.props.deleteRecipe with the recipe id.
      * This function simply adds a layer of indirection to get the call signatures to match
      */
-    private deleteRecipe = (id: string) => () => this.props.deleteRecipe(id).catch(() => null);
+    private deleteRecipe = (id: string) => () => this.props.deleteRecipe(id).catch(() => null)
 }
 
 /**
@@ -318,29 +318,29 @@ class RecipeRecord extends Component<IProps> {
  * @param props any additional properties to add to the TextField
  */
 const InputField = (props: any) => (
-    <TextField required={true}
-               fullWidth={true}
-               margin={'normal'}
-               {...props} />
-);
+    <TextField required={ true }
+               fullWidth={ true }
+               margin={ 'normal' }
+               { ...props } />
+)
 
 /**
  * This component wraps its children in an expansion panel
  */
 const Compress = (props: ICompressProps) => (
     <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{props.heading}</Typography>
+        <ExpansionPanelSummary expandIcon={ <ExpandMoreIcon /> }>
+            <Typography>{ props.heading }</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-            {props.children}
+            { props.children }
         </ExpansionPanelDetails>
     </ExpansionPanel>
-);
+)
 
 interface ICompressProps {
-    heading: string;
-    children: JSX.Element;
+    heading: string
+    children: JSX.Element
 }
 
 enum RetrievalStatus {
@@ -350,32 +350,32 @@ enum RetrievalStatus {
 }
 
 interface IState {
-    cook_time: number;
-    id: string | null;
-    image_url: string;
-    ingredient_sections: IIngredientSection[];
-    last_updated?: number;
-    method: string[];
-    prep_time: number;
-    produces: number;
-    reference_url: string;
-    servesSelected: boolean;
-    title: string;
-    status: RetrievalStatus;
+    cook_time: number
+    id: string | null
+    image_url: string
+    ingredient_sections: IIngredientSection[]
+    last_updated?: number
+    method: string[]
+    prep_time: number
+    produces: number
+    reference_url: string
+    servesSelected: boolean
+    title: string
+    status: RetrievalStatus
 }
 
 type IProps = RouteComponentProps<{ id: string }> & {
-    authenticated: boolean;
-    recipes: IRecipeState;
-    createRecipe: (item: INewRecipe) => Promise<undefined>;
-    deleteRecipe: (id: string) => Promise<undefined>;
-    getRecipe: (id: string) => Promise<undefined>;
-    updateRecipe: (id: string, item: Partial<INewRecipe>) => Promise<undefined>;
+    authenticated: boolean
+    recipes: IRecipeState
+    createRecipe: (item: INewRecipe) => Promise<undefined>
+    deleteRecipe: (id: string) => Promise<undefined>
+    getRecipe: (id: string) => Promise<undefined>
+    updateRecipe: (id: string, item: Partial<INewRecipe>) => Promise<undefined>
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
     authenticated: state.user.profile !== null,
     recipes: state.recipes
-});
+})
 
-export default connect(mapStateToProps, {createRecipe, deleteRecipe, getRecipe, updateRecipe})(RecipeRecord);
+export default connect(mapStateToProps, { createRecipe, deleteRecipe, getRecipe, updateRecipe })(RecipeRecord)

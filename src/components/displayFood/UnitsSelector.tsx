@@ -1,47 +1,47 @@
-import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, TextField } from '@material-ui/core';
-import * as React from 'react';
-import { ChangeEvent } from 'react';
-import { connect } from 'react-redux';
+import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, TextField } from '@material-ui/core'
+import * as React from 'react'
+import { ChangeEvent } from 'react'
+import { connect } from 'react-redux'
 
-import { IGlobalState } from '../../reducers';
-import { IState as IUnitsState } from '../../reducers/units/reducer';
-import NestedUtility from '../nestedUtility';
-import SubComponent from '../SubComponent';
-import { IUnitSelection } from './FoodRecord';
+import { IGlobalState } from '../../reducers'
+import { IState as IUnitsState } from '../../reducers/units/reducer'
+import NestedUtility from '../nestedUtility'
+import SubComponent from '../SubComponent'
+import { IUnitSelection } from './FoodRecord'
 
 /**
  * A component to choose the relevant units and ratios for a food record
  */
 class UnitsSelector extends SubComponent<IProps, IState> {
     public render(): JSX.Element {
-        const { selections } = this.state;
-        const { readOnly } = this.props;
+        const { selections } = this.state
+        const { readOnly } = this.props
 
         return (
-            <FormControl required={true}
-                         fullWidth={true}
-                         margin={'normal'}>
+            <FormControl required={ true }
+                         fullWidth={ true }
+                         margin={ 'normal' }>
                 <InputLabel>standard unit</InputLabel>
-                <Select multiple={true}
-                        value={selections}
-                        renderValue={this.renderUnitSelections}>
-                    {selections.map((unit, id) => (
-                        <MenuItem key={id}>
-                            <Checkbox checked={unit.selected}
-                                      onChange={this.toggleSelected(id)}
-                                      disabled={readOnly}
+                <Select multiple={ true }
+                        value={ selections }
+                        renderValue={ this.renderUnitSelections }>
+                    { selections.map((unit, id) => (
+                        <MenuItem key={ id }>
+                            <Checkbox checked={ unit.selected }
+                                      onChange={ this.toggleSelected(id) }
+                                      disabled={ readOnly }
                             />
-                            <TextField value={String(unit.quantity)}
-                                       onChange={this.onQuantityChange(id)}
-                                       required={unit.selected}
-                                       type={'number'}
-                                       inputProps={{min: 0, step: 0.1, readOnly}} />
-                            <ListItemText primary={this.measurement(id)} />
+                            <TextField value={ String(unit.quantity) }
+                                       onChange={ this.onQuantityChange(id) }
+                                       required={ unit.selected }
+                                       type={ 'number' }
+                                       inputProps={ { min: 0, step: 0.1, readOnly } } />
+                            <ListItemText primary={ this.measurement(id) } />
                         </MenuItem>
-                    ))}
+                    )) }
                 </Select>
             </FormControl>
-        );
+        )
     }
 
     /**
@@ -49,28 +49,28 @@ class UnitsSelector extends SubComponent<IProps, IState> {
      * @param selections the state.unit.selections array
      */
     private renderUnitSelections = (selections: IUnitSelection[]) => {
-        const ids = selections.map((selection, id) => selection.selected ? id : -1).filter(v => v >= 0);
-        return ids.map(id => `${selections[id].quantity} ${this.measurement(id)}`).join('; ');
-    };
+        const ids = selections.map((selection, id) => selection.selected ? id : -1).filter(v => v >= 0)
+        return ids.map(id => `${ selections[id].quantity } ${ this.measurement(id) }`).join(' ')
+    }
 
     /**
      * Update the state whenever the checkbox corresponding to the specified unit's 'selected' property is toggled
      * @param id the unit id
      */
     private toggleSelected = (id: number) => () => this.setState((state: IState) => ({
-        selections: NestedUtility.toggleNested(state, `selections[${id}].selected`).selections
-    }));
+        selections: NestedUtility.toggleNested(state, `selections[${ id }].selected`).selections
+    }))
 
     /**
      * Update the state whenever the input box corresponding to the specified unit's 'quantity' property is updated
      * @param id the unit id
      */
     private onQuantityChange = (id: number) => (e: ChangeEvent<HTMLInputElement>) => {
-        const value = String(e.target.value); // cache the result before React's Synthetic Handler clears it
+        const value = String(e.target.value) // cache the result before React's Synthetic Handler clears it
         this.setState((state: IState) => ({
-            selections: NestedUtility.replaceField<string>(state, `selections[${id}].quantity`, value).selections
-        }));
-    };
+            selections: NestedUtility.replaceField<string>(state, `selections[${ id }].quantity`, value).selections
+        }))
+    }
 
     /**
      * A utility function to return the string '<measurement symbol> <item description>'
@@ -80,15 +80,15 @@ class UnitsSelector extends SubComponent<IProps, IState> {
      */
     private measurement = (id: number) => {
         return Number(this.state.selections[id].quantity) === 1 ?
-            `${this.props.units[id].singular} ${this.props.singular ? this.props.singular : '[item]'}` :
-            `${this.props.units[id].plural} ${this.props.plural ? this.props.plural : '[items]'}`;
-    };
+            `${ this.props.units[id].singular } ${ this.props.singular ? this.props.singular : '[item]' }` :
+            `${ this.props.units[id].plural } ${ this.props.plural ? this.props.plural : '[items]' }`
+    }
 }
 
 interface IProps {
-    singular: string;
-    plural: string;
-    readOnly: boolean;
+    singular: string
+    plural: string
+    readOnly: boolean
     units: IUnitsState
 }
 
@@ -98,6 +98,6 @@ export interface IState {
 
 const mapStateToProps = (state: IGlobalState) => ({
     units: state.units
-});
+})
 
-export default connect(mapStateToProps)(UnitsSelector);
+export default connect(mapStateToProps)(UnitsSelector)

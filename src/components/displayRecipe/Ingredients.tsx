@@ -1,16 +1,16 @@
-import { Button, Divider, TextField } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
-import * as React from 'react';
-import { ChangeEvent } from 'react';
-import FlexView from 'react-flexview';
+import { Button, Divider, TextField } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
+import * as React from 'react'
+import { ChangeEvent } from 'react'
+import FlexView from 'react-flexview'
 
-import { IIngredientSection } from '../../server/interfaces';
-import NestedUtility from '../nestedUtility';
-import SubComponent from '../SubComponent';
-import Ingredient, { IState as IIngState } from './Ingredient';
+import { IIngredientSection } from '../../server/interfaces'
+import NestedUtility from '../nestedUtility'
+import SubComponent from '../SubComponent'
+import Ingredient, { IState as IIngState } from './Ingredient'
 
 interface IProps {
-    authenticated: boolean;
+    authenticated: boolean
 }
 
 class Ingredients extends SubComponent<IProps, IState> {
@@ -25,71 +25,71 @@ class Ingredients extends SubComponent<IProps, IState> {
                     ingredient_keys: section.ingredients.map(() => random()),
                     section_key: random()
                 }))
-            };
-        });
+            }
+        })
     }
 
     public render(): JSX.Element {
-        const {authenticated} = this.props;
-        const {sections} = this.state;
+        const { authenticated } = this.props
+        const { sections } = this.state
         // ensure typescript knows the keys are defined
-        const keys = Object.assign({}, this.state.keys);
+        const keys = Object.assign({}, this.state.keys)
 
         return (
-            <FlexView column={true} width={'100%'}>
+            <FlexView column={ true } width={ '100%' }>
                 <FlexView>
-                    <Button onClick={this.newSection}
-                            disabled={!authenticated}
-                            color={'primary'}>
+                    <Button onClick={ this.newSection }
+                            disabled={ !authenticated }
+                            color={ 'primary' }>
                         New Section
                     </Button>
                 </FlexView>
-                {sections.map((section, secIdx) => (
-                    <React.Fragment key={keys[secIdx].section_key}>
-                        {secIdx > 0 ? <Divider /> : null}
-                        <FlexView column={true} grow={true}>
-                            <TextField label={'heading (optional)'}
-                                       value={section.heading}
-                                       onChange={this.onHeadingChange(secIdx)}
-                                       inputProps={{readOnly: !authenticated}}
-                                       required={false}
-                                       fullWidth={true}
-                                       margin={'normal'}
+                { sections.map((section, secIdx) => (
+                    <React.Fragment key={ keys[secIdx].section_key }>
+                        { secIdx > 0 ? <Divider /> : null }
+                        <FlexView column={ true } grow={ true }>
+                            <TextField label={ 'heading (optional)' }
+                                       value={ section.heading }
+                                       onChange={ this.onHeadingChange(secIdx) }
+                                       inputProps={ { readOnly: !authenticated } }
+                                       required={ false }
+                                       fullWidth={ true }
+                                       margin={ 'normal' }
                             />
-                            {section.ingredients.map((ing, ingIdx) => (
-                                <FlexView key={keys[secIdx].ingredient_keys[ingIdx]}>
-                                    <Ingredient state={{ing}}
-                                                propagate={this.updateIngredient(secIdx, ingIdx)}
-                                                authenticated={authenticated}
+                            { section.ingredients.map((ing, ingIdx) => (
+                                <FlexView key={ keys[secIdx].ingredient_keys[ingIdx] }>
+                                    <Ingredient state={ { ing } }
+                                                propagate={ this.updateIngredient(secIdx, ingIdx) }
+                                                authenticated={ authenticated }
                                     />
-                                    <Button onClick={this.deleteIngredient(secIdx, ingIdx)}
-                                            disabled={!authenticated}>
+                                    <Button onClick={ this.deleteIngredient(secIdx, ingIdx) }
+                                            disabled={ !authenticated }>
                                         <DeleteIcon />
                                     </Button>
                                 </FlexView>
-                            ))}
+                            )) }
                         </FlexView>
                         <FlexView>
-                            <Button onClick={this.newIngredient('Quantified', secIdx)}
-                                    disabled={!authenticated}
-                                    color={'primary'}>
+                            <Button onClick={ this.newIngredient('Quantified', secIdx) }
+                                    disabled={ !authenticated }
+                                    color={ 'primary' }>
                                 Add Quantified Ingredient
                             </Button>
-                            <Button onClick={this.newIngredient('FreeText', secIdx)}
-                                    disabled={!authenticated}
-                                    color={'primary'}>
+                            <Button onClick={ this.newIngredient('FreeText', secIdx) }
+                                    disabled={ !authenticated }
+                                    color={ 'primary' }>
                                 Add FreeText Ingredient
                             </Button>
-                            <Button onClick={this.deleteSection(secIdx)}
-                                    disabled={!authenticated}
-                                    color={'secondary'}>
+                            <Button onClick={ this.deleteSection(secIdx) }
+                                    disabled={ !authenticated }
+                                    color={ 'secondary' }>
                                 Delete Section
                             </Button>
                         </FlexView>
                     </React.Fragment>
-                ))}
+                )) }
             </FlexView>
-        );
+        )
     }
 
     /**
@@ -97,23 +97,23 @@ class Ingredients extends SubComponent<IProps, IState> {
      * @param idx the index of the ingredient section
      */
     private onHeadingChange = (idx: number) => (e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value; // cache the result before React's Synthetic Handler clears it
+        const value = e.target.value // cache the result before React's Synthetic Handler clears it
         this.setState((state: IState) => ({
-            sections: NestedUtility.replaceField(state, `sections[${idx}].heading`, value).sections
-        }));
-    };
+            sections: NestedUtility.replaceField(state, `sections[${ idx }].heading`, value).sections
+        }))
+    }
 
     /**
      * Create a new ingredient section
      */
     private newSection = () => {
         this.setLocalState((state: IState) => ({
-            keys: [...(state.keys ? state.keys : []), {section_key: random(), ingredient_keys: []}]
-        }));
+            keys: [...(state.keys ? state.keys : []), { section_key: random(), ingredient_keys: [] }]
+        }))
         this.setState((state: IState) => ({
-            sections: NestedUtility.appendToNestedArray(state, `sections`, {heading: '', ingredients: []}).sections
-        }));
-    };
+            sections: NestedUtility.appendToNestedArray(state, `sections`, { heading: '', ingredients: [] }).sections
+        }))
+    }
 
     /**
      * Remove the specified ingredient section
@@ -122,11 +122,11 @@ class Ingredients extends SubComponent<IProps, IState> {
     private deleteSection = (idx: number) => () => {
         this.setState((state: IState) => ({
             sections: NestedUtility.removeFromNestedArray(state, `sections`, idx).sections
-        }));
+        }))
         this.setLocalState((state: IState) => ({
             keys: NestedUtility.removeFromNestedArray(state, `keys`, idx).keys
-        }));
-    };
+        }))
+    }
 
     /**
      * Append a new empty ingredient of the specified type
@@ -135,11 +135,11 @@ class Ingredients extends SubComponent<IProps, IState> {
      * @param idx the index of the ingredient section
      */
     private newIngredient = (ingType: string, idx: number) => () => {
-        const validType = (ingType === 'Quantified' || ingType === 'FreeText');
+        const validType = (ingType === 'Quantified' || ingType === 'FreeText')
         if (validType) {
             this.setLocalState((state: IState) => {
-                return {keys: NestedUtility.appendToNestedArray(state, `keys[${idx}].ingredient_keys`, random()).keys};
-            });
+                return { keys: NestedUtility.appendToNestedArray(state, `keys[${ idx }].ingredient_keys`, random()).keys }
+            })
             const newIngredient = ingType === 'Quantified' ?
                 {
                     additional_desc: '',
@@ -151,12 +151,12 @@ class Ingredients extends SubComponent<IProps, IState> {
                 {
                     description: '',
                     ingredient_type: ingType
-                };
+                }
             this.setState((state: IState) => ({
-                sections: NestedUtility.appendToNestedArray(state, `sections[${idx}].ingredients`, newIngredient).sections
-            }));
+                sections: NestedUtility.appendToNestedArray(state, `sections[${ idx }].ingredients`, newIngredient).sections
+            }))
         }
-    };
+    }
 
     /**
      * Whenever the sub-component corresponding to the specified ingredient is updated,
@@ -166,11 +166,11 @@ class Ingredients extends SubComponent<IProps, IState> {
      */
     private updateIngredient = (secIdx: number, ingIdx: number) => (updateFn: (ingState: IIngState) => Partial<IIngState>) =>
         this.setState((state: IState) => {
-            const update = updateFn({ing: state.sections[secIdx].ingredients[ingIdx]});
+            const update = updateFn({ ing: state.sections[secIdx].ingredients[ingIdx] })
             return update.ing !== undefined ?
-                {sections: NestedUtility.replaceField(state, `sections[${secIdx}].ingredients[${ingIdx}]`, update.ing).sections} :
-                {};
-        });
+                { sections: NestedUtility.replaceField(state, `sections[${ secIdx }].ingredients[${ ingIdx }]`, update.ing).sections } :
+                {}
+        })
 
     /**
      * Remove the specified ingredient
@@ -179,17 +179,17 @@ class Ingredients extends SubComponent<IProps, IState> {
      */
     private deleteIngredient = (secIdx: number, ingIdx: number) => () => {
         this.setState((state: IState) => ({
-            sections: NestedUtility.removeFromNestedArray(state, `sections[${secIdx}].ingredients`, ingIdx).sections
-        }));
+            sections: NestedUtility.removeFromNestedArray(state, `sections[${ secIdx }].ingredients`, ingIdx).sections
+        }))
         this.setLocalState((state: IState) => ({
-            keys: NestedUtility.removeFromNestedArray(state, `keys[${secIdx}].ingredient_keys`, ingIdx).keys
-        }));
-    };
+            keys: NestedUtility.removeFromNestedArray(state, `keys[${ secIdx }].ingredient_keys`, ingIdx).keys
+        }))
+    }
 }
 
 export interface IState {
-    sections: IIngredientSection[];
-    keys?: ISectionKeys[];
+    sections: IIngredientSection[]
+    keys?: ISectionKeys[]
 }
 
 interface ISectionKeys {
@@ -197,7 +197,7 @@ interface ISectionKeys {
     ingredient_keys: number[]
 }
 
-const random = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+const random = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
-export default Ingredients;
+export default Ingredients
 

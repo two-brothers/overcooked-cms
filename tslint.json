@@ -6,6 +6,10 @@
       "node_modules/**/*.ts",
       "coverage/lcov-report/*.js",
       "overcooked-api/**/*.*"
-    ]
+    ],
+    "rules": {
+      "semicolon": [false, "always"],
+      "jsx-space-before-trailing-slash": true
+    }
   }
 }

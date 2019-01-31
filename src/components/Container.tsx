@@ -31,16 +31,18 @@ class Container extends Component<IProps> {
     }
 
     public render(): JSX.Element {
+        const base = process.env.PUBLIC_URL
+
         return (
             <div>
                 <AppBar />
                 <BrowserRouter>
                     <Switch>
-                        <Route exact={ true } path={ '/cms' } component={ Home } />
-                        <Route exact={ true } path={ '/cms/food/new' } component={ FoodRecord } />
-                        <Route exact={ true } path={ '/cms/food/:id?' } component={ FoodRecord } />
-                        <Route exact={ true } path={ '/cms/recipe/new' } component={ RecipeRecord } />
-                        <Route exact={ true } path={ '/cms/recipe/:id?' } component={ RecipeRecord } />
+                        <Route exact={ true } path={ `${ base }/` } component={ Home } />
+                        <Route exact={ true } path={ `${ base }/food/new` } component={ FoodRecord } />
+                        <Route exact={ true } path={ `${ base }/food/:id?` } component={ FoodRecord } />
+                        <Route exact={ true } path={ `${ base }/recipe/new` } component={ RecipeRecord } />
+                        <Route exact={ true } path={ `${ base }/recipe/:id?` } component={ RecipeRecord } />
                     </Switch>
                 </BrowserRouter>
             </div>

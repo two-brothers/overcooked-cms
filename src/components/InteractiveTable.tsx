@@ -56,7 +56,7 @@ class InteractiveTable<T> extends Component<IProps<T>> {
      */
     private navigateTo = (record: T) => () => {
         const { history, selectRoute } = this.props
-        history.push(selectRoute(record))
+        history.push(`${ process.env.PUBLIC_URL }${ selectRoute(record) }`)
     }
 
     /**
@@ -64,7 +64,7 @@ class InteractiveTable<T> extends Component<IProps<T>> {
      */
     private newRecord = () => {
         const { history, newRoute } = this.props
-        history.push(newRoute)
+        history.push(`${ process.env.PUBLIC_URL }${ newRoute }`)
     }
 }
 

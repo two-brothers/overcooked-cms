@@ -20,7 +20,7 @@ class DisplayFood extends Component<IProps> {
                 keyFn={ this.key }
                 valueFn={ this.value }
                 records={ foodItems }
-                newRoute={ '/cms/food/new' }
+                newRoute={ '/food/new' }
                 selectRoute={ this.select } />
         )
     }
@@ -35,7 +35,7 @@ class DisplayFood extends Component<IProps> {
      * Navigate to a route that includes the record id when the food item is selected
      * @param food the selected food record
      */
-    private select = (food: IFood) => `/cms/food/${ food.id }`
+    private select = (food: IFood) => `/food/${ food.id }`
 
     /**
      * Return the JSX Element that should be inserted in the table under the specified heading

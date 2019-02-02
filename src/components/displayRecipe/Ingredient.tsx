@@ -45,7 +45,7 @@ class Ingredient extends SubComponent<IProps, IState> {
                                    onChange={ this.onInputChange('amount') }
                                    type={ 'number' }
                                    required={ true }
-                                   inputProps={ { min: 0, step: 0.1, readOnly: !authenticated } }
+                                   inputProps={ { min: 0, step: 0.01, readOnly: !authenticated } }
                         />
                     </FlexView>
                     <FlexView basis={ 100 } className={ classes.spaced }>

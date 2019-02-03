@@ -1,5 +1,11 @@
 import {
-    Button, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Switch, TextField, Typography
+    Button,
+    ExpansionPanel,
+    ExpansionPanelDetails,
+    ExpansionPanelSummary,
+    Switch,
+    TextField,
+    Typography
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import * as React from 'react'
@@ -10,7 +16,7 @@ import { RouteComponentProps } from 'react-router'
 import { IGlobalState } from '../../reducers'
 import { createRecipe, deleteRecipe, getRecipe, updateRecipe } from '../../reducers/recipe/actions'
 import { IState as IRecipeState } from '../../reducers/recipe/reducer'
-import { IIngredientSection, INewRecipe } from '../../server/interfaces'
+import { IIngredientSection, INewRecipe, IngredientType } from '../../server/interfaces'
 import DeleteRecord from '../DeleteRecord'
 import { Utility } from '../utility'
 import Ingredients, { IState as IIngsState } from './Ingredients'
@@ -189,7 +195,7 @@ class RecipeRecord extends Component<IProps> {
             Object.assign(
                 {
                     ingredients: section.ingredients.map(ingredient =>
-                        ingredient.ingredient_type === 'Quantified' ?
+                        ingredient.ingredient_type === IngredientType.Quantified ?
                             Object.assign(
                                 { ingredient_type: ingredient.ingredient_type, food_id: ingredient.food_id },
                                 { amount: Number(ingredient.amount) },
@@ -276,7 +282,7 @@ class RecipeRecord extends Component<IProps> {
                 section.ingredients.reduce((allIngredientsAreValid, ingredient) =>
                     allIngredientsAreValid && (
                         (
-                            ingredient.ingredient_type === 'Quantified' &&
+                            ingredient.ingredient_type === IngredientType.Quantified &&
                             Number(ingredient.amount) > 0 &&
                             ingredient.unit_ids.length > 0 &&
                             ingredient.unit_ids.reduce((allUnitIdsAreValid, unitID) =>
@@ -291,7 +297,7 @@ class RecipeRecord extends Component<IProps> {
                             // we don't need to check the additional_desc - it is valid in all circumstances
                         ) ||
                         (
-                            ingredient.ingredient_type === 'FreeText' &&
+                            ingredient.ingredient_type === IngredientType.FreeText &&
                             ingredient.description.trim().length > 0
                         )
                     ),

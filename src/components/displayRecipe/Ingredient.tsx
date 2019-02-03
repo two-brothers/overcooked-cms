@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { IGlobalState } from '../../reducers'
 import { IState as IFoodState } from '../../reducers/food/reducer'
 import { IState as IUnits } from '../../reducers/units/reducer'
-import { IIngredient } from '../../server/interfaces'
+import { IIngredient, IngredientType } from '../../server/interfaces'
 import NestedUtility from '../nestedUtility'
 import SubComponent from '../SubComponent'
 
@@ -18,7 +18,7 @@ interface IPassedProps {
 
 class Ingredient extends SubComponent<IProps, IState> {
     public render(): JSX.Element {
-        if (this.state.ing.ingredient_type === 'Quantified') {
+        if (this.state.ing.ingredient_type === IngredientType.Quantified) {
             const { amount, unit_ids, food_id, additional_desc } = this.state.ing
             const { units, food, authenticated, classes } = this.props
             const isSingular = Number(amount) === 1
@@ -95,7 +95,7 @@ class Ingredient extends SubComponent<IProps, IState> {
                     </FlexView>
                 </FlexView>
             )
-        } else if (this.state.ing.ingredient_type === 'FreeText') {
+        } else if (this.state.ing.ingredient_type === IngredientType.FreeText) {
             const { authenticated, classes } = this.props
 
             return (
@@ -131,7 +131,7 @@ class Ingredient extends SubComponent<IProps, IState> {
     private onUnitSelection = (e: ChangeEvent<HTMLSelectElement>) => {
         const value = Number(e.target.value) // cache the result before React's Synthetic Handler clears it
         this.setState((state: IState) => {
-            if (state.ing.ingredient_type === 'Quantified' && state.ing.unit_ids.indexOf(value) < 0) {
+            if (state.ing.ingredient_type === IngredientType.Quantified && state.ing.unit_ids.indexOf(value) < 0) {
                 return { ing: NestedUtility.appendToNestedArray(state.ing, 'unit_ids', value) }
             }
             return {}
@@ -143,7 +143,7 @@ class Ingredient extends SubComponent<IProps, IState> {
      * @param idx the index of the unit to delete
      */
     private deleteSelectedUnit = (idx: number) => () =>
-        this.setState((state: IState) => (state.ing.ingredient_type === 'Quantified') ?
+        this.setState((state: IState) => (state.ing.ingredient_type === IngredientType.Quantified) ?
             { ing: NestedUtility.removeFromNestedArray(state.ing, 'unit_ids', idx) } :
             {}
         )
@@ -154,9 +154,9 @@ class Ingredient extends SubComponent<IProps, IState> {
     private onFoodSelection = (e: ChangeEvent<HTMLSelectElement>) => {
         const foodId = e.target.value // cache the result before React's Synthetic Handler clear it
         this.setState((state: IState) => {
-            if (state.ing.ingredient_type === 'Quantified') {
+            if (state.ing.ingredient_type === IngredientType.Quantified) {
                 const ing: IIngredient = NestedUtility.replaceField(state.ing, 'food_id', foodId)
-                if (ing.ingredient_type === 'Quantified') { // this has to be true, but typescript doesn't know it
+                if (ing.ingredient_type === IngredientType.Quantified) { // this has to be true, but typescript doesn't know it
                     const matchingUnitIds = this.props.food[foodId].conversions.map(conv => conv.unit_id)
                     const unitIds = ing.unit_ids.filter(unitId => matchingUnitIds.indexOf(unitId) >= 0)
                     return { ing: NestedUtility.replaceField(ing, 'unit_ids', unitIds) }
@@ -173,7 +173,7 @@ class Ingredient extends SubComponent<IProps, IState> {
      * @param foodId the id of the selected food item
      */
     private renderFoodSelection = (foodId: string) => {
-        if (foodId && this.state.ing.ingredient_type === 'Quantified') {
+        if (foodId && this.state.ing.ingredient_type === IngredientType.Quantified) {
             return this.state.ing.amount === 1 ?
                 this.props.food[foodId].name.singular :
                 this.props.food[foodId].name.plural

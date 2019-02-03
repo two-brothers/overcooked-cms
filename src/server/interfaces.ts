@@ -55,8 +55,13 @@ export interface IIngredientSection {
 
 export type IIngredient = IQuantifiedIngredient | IFreeTextIngredient
 
+export enum IngredientType {
+    Quantified = 0,
+    FreeText = 1
+}
+
 export interface IQuantifiedIngredient {
-    ingredient_type: 'Quantified'
+    ingredient_type: IngredientType.Quantified
     amount: number
     unit_ids: number[]
     food_id: string
@@ -64,6 +69,6 @@ export interface IQuantifiedIngredient {
 }
 
 export interface IFreeTextIngredient {
-    ingredient_type: 'FreeText'
+    ingredient_type: IngredientType.FreeText
     description: string
 }

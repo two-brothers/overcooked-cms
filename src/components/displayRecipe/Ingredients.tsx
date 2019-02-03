@@ -4,7 +4,7 @@ import * as React from 'react'
 import { ChangeEvent } from 'react'
 import FlexView from 'react-flexview'
 
-import { IIngredientSection } from '../../server/interfaces'
+import { IIngredientSection, IngredientType } from '../../server/interfaces'
 import NestedUtility from '../nestedUtility'
 import SubComponent from '../SubComponent'
 import Ingredient, { IState as IIngState } from './Ingredient'
@@ -70,12 +70,12 @@ class Ingredients extends SubComponent<IProps, IState> {
                             )) }
                         </FlexView>
                         <FlexView>
-                            <Button onClick={ this.newIngredient('Quantified', secIdx) }
+                            <Button onClick={ this.newIngredient(IngredientType.Quantified, secIdx) }
                                     disabled={ !authenticated }
                                     color={ 'primary' }>
                                 Add Quantified Ingredient
                             </Button>
-                            <Button onClick={ this.newIngredient('FreeText', secIdx) }
+                            <Button onClick={ this.newIngredient(IngredientType.FreeText, secIdx) }
                                     disabled={ !authenticated }
                                     color={ 'primary' }>
                                 Add FreeText Ingredient
@@ -131,31 +131,28 @@ class Ingredients extends SubComponent<IProps, IState> {
     /**
      * Append a new empty ingredient of the specified type
      * at the end of the specified section's ingredient list
-     * @param ingType the ingredient type (either 'Quantified' or 'FreeText')
+     * @param ingType the ingredient type
      * @param idx the index of the ingredient section
      */
-    private newIngredient = (ingType: string, idx: number) => () => {
-        const validType = (ingType === 'Quantified' || ingType === 'FreeText')
-        if (validType) {
-            this.setLocalState((state: IState) => {
-                return { keys: NestedUtility.appendToNestedArray(state, `keys[${ idx }].ingredient_keys`, random()).keys }
-            })
-            const newIngredient = ingType === 'Quantified' ?
-                {
-                    additional_desc: '',
-                    amount: '',
-                    food_id: '',
-                    ingredient_type: ingType,
-                    unit_ids: []
-                } :
-                {
-                    description: '',
-                    ingredient_type: ingType
-                }
-            this.setState((state: IState) => ({
-                sections: NestedUtility.appendToNestedArray(state, `sections[${ idx }].ingredients`, newIngredient).sections
-            }))
-        }
+    private newIngredient = (ingType: IngredientType, idx: number) => () => {
+        this.setLocalState((state: IState) => {
+            return { keys: NestedUtility.appendToNestedArray(state, `keys[${ idx }].ingredient_keys`, random()).keys }
+        })
+        const newIngredient = ingType === IngredientType.Quantified ?
+            {
+                additional_desc: '',
+                amount: '',
+                food_id: '',
+                ingredient_type: ingType,
+                unit_ids: []
+            } :
+            {
+                description: '',
+                ingredient_type: ingType
+            }
+        this.setState((state: IState) => ({
+            sections: NestedUtility.appendToNestedArray(state, `sections[${ idx }].ingredients`, newIngredient).sections
+        }))
     }
 
     /**

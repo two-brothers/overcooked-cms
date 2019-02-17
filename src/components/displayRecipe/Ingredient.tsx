@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { IGlobalState } from '../../reducers'
 import { IState as IFoodState } from '../../reducers/food/reducer'
 import { IState as IUnits } from '../../reducers/units/reducer'
-import { IIngredient, IngredientType } from '../../server/interfaces'
+import { IIngredient, IngredientType, IQuantifiedIngredient } from '../../server/interfaces'
 import NestedUtility from '../nestedUtility'
 import SubComponent from '../SubComponent'
 
@@ -18,21 +18,21 @@ interface IPassedProps {
 
 class Ingredient extends SubComponent<IProps, IState> {
     public render(): JSX.Element {
-        if (this.state.ing.ingredient_type === IngredientType.Quantified) {
-            const { amount, unit_ids, food_id, additional_desc } = this.state.ing
+        if (this.state.ing.ingredientType === IngredientType.Quantified) {
+            const { amount, unitIds, foodId, additionalDesc } = this.state.ing
             const { units, food, authenticated, classes } = this.props
             const isSingular = Number(amount) === 1
 
             // the unit id options are either restricted by the chosen food, or not restricted at all
             // filter out the ones already chosen
-            let unitIdOptions = food_id ? food[food_id].conversions.map(conv => conv.unit_id) : units.map((_, idx) => idx)
-            unitIdOptions = unitIdOptions.filter(id => unit_ids.indexOf(id) < 0)
+            let unitIdOptions = foodId ? food[foodId].conversions.map(conv => conv.unitId) : units.map((_, idx) => idx)
+            unitIdOptions = unitIdOptions.filter(id => unitIds.indexOf(id) < 0)
 
             let unitNames = units.map(unit => isSingular ? unit.singular : unit.plural)
             // replace the singular (empty) unit symbol with '(item)' or '(items)'
             unitNames = [isSingular ? '(item)' : '(items)', ...unitNames.slice(1)]
 
-            const selectedUnitNames = unit_ids.map(id => unitNames[id])
+            const selectedUnitNames = unitIds.map(id => unitNames[id])
             const unitOptions = unitIdOptions.map(id => ({ idx: id, name: unitNames[id] }))
 
             const foodIds = Object.getOwnPropertyNames(food)
@@ -52,7 +52,7 @@ class Ingredient extends SubComponent<IProps, IState> {
                         <FormControl className={ classes.fullWidth }>
                             <InputLabel required={ true }>Food</InputLabel>
                             <Select onChange={ authenticated ? this.onFoodSelection : undefined }
-                                    value={ food_id }
+                                    value={ foodId }
                                     renderValue={ this.renderFoodSelection }>
                                 { foodIds.map(id => (
                                     <MenuItem value={ id } key={ id } disabled={ !authenticated }>
@@ -86,8 +86,8 @@ class Ingredient extends SubComponent<IProps, IState> {
                     )) }
                     <FlexView grow={ true }>
                         <TextField label={ 'description (optional)' }
-                                   value={ additional_desc }
-                                   onChange={ this.onInputChange('additional_desc') }
+                                   value={ additionalDesc }
+                                   onChange={ this.onInputChange('additionalDesc') }
                                    required={ false }
                                    inputProps={ { readOnly: !authenticated } }
                                    fullWidth={ true }
@@ -95,7 +95,7 @@ class Ingredient extends SubComponent<IProps, IState> {
                     </FlexView>
                 </FlexView>
             )
-        } else if (this.state.ing.ingredient_type === IngredientType.FreeText) {
+        } else if (this.state.ing.ingredientType === IngredientType.FreeText) {
             const { authenticated, classes } = this.props
 
             return (
@@ -126,41 +126,39 @@ class Ingredient extends SubComponent<IProps, IState> {
     }
 
     /**
-     * Whenever a new unit is selected, add it to the list of unit_ids
+     * Whenever a new unit is selected, add it to the list of unitIds
      */
     private onUnitSelection = (e: ChangeEvent<HTMLSelectElement>) => {
         const value = Number(e.target.value) // cache the result before React's Synthetic Handler clears it
         this.setState((state: IState) => {
-            if (state.ing.ingredient_type === IngredientType.Quantified && state.ing.unit_ids.indexOf(value) < 0) {
-                return { ing: NestedUtility.appendToNestedArray(state.ing, 'unit_ids', value) }
+            if (state.ing.ingredientType === IngredientType.Quantified && state.ing.unitIds.indexOf(value) < 0) {
+                return { ing: NestedUtility.appendToNestedArray(state.ing, 'unitIds', value) }
             }
             return {}
         })
     }
 
     /**
-     * Delete the specified unit from the list of unit_ids
+     * Delete the specified unit from the list of unitIds
      * @param idx the index of the unit to delete
      */
     private deleteSelectedUnit = (idx: number) => () =>
-        this.setState((state: IState) => (state.ing.ingredient_type === IngredientType.Quantified) ?
-            { ing: NestedUtility.removeFromNestedArray(state.ing, 'unit_ids', idx) } :
+        this.setState((state: IState) => (state.ing.ingredientType === IngredientType.Quantified) ?
+            { ing: NestedUtility.removeFromNestedArray(state.ing, 'unitIds', idx) } :
             {}
         )
 
     /**
-     * Whenever a food is selected, set the food_id and remove any incompatible units
+     * Whenever a food is selected, set the foodId and remove any incompatible units
      */
     private onFoodSelection = (e: ChangeEvent<HTMLSelectElement>) => {
         const foodId = e.target.value // cache the result before React's Synthetic Handler clear it
         this.setState((state: IState) => {
-            if (state.ing.ingredient_type === IngredientType.Quantified) {
-                const ing: IIngredient = NestedUtility.replaceField(state.ing, 'food_id', foodId)
-                if (ing.ingredient_type === IngredientType.Quantified) { // this has to be true, but typescript doesn't know it
-                    const matchingUnitIds = this.props.food[foodId].conversions.map(conv => conv.unit_id)
-                    const unitIds = ing.unit_ids.filter(unitId => matchingUnitIds.indexOf(unitId) >= 0)
-                    return { ing: NestedUtility.replaceField(ing, 'unit_ids', unitIds) }
-                }
+            if (state.ing.ingredientType === IngredientType.Quantified) {
+                const ing: IQuantifiedIngredient = NestedUtility.replaceField(state.ing, 'foodId', foodId)
+                const matchingUnitIds = this.props.food[foodId].conversions.map(conv => conv.unitId)
+                const unitIds = ing.unitIds.filter(unitId => matchingUnitIds.indexOf(unitId) >= 0)
+                return { ing: NestedUtility.replaceField(ing, 'unitIds', unitIds) }
             }
             return {}
 
@@ -173,7 +171,7 @@ class Ingredient extends SubComponent<IProps, IState> {
      * @param foodId the id of the selected food item
      */
     private renderFoodSelection = (foodId: string) => {
-        if (foodId && this.state.ing.ingredient_type === IngredientType.Quantified) {
+        if (foodId && this.state.ing.ingredientType === IngredientType.Quantified) {
             return this.state.ing.amount === 1 ?
                 this.props.food[foodId].name.singular :
                 this.props.food[foodId].name.plural

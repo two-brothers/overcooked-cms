@@ -28,7 +28,7 @@ const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | ReplaceF
                 type: ActionNames.REPLACE_ITEMS
             })
 
-            return res.last_page ?
+            return res.lastPage ?
                 Promise.resolve(undefined) :
                 initRecipePage(page + 1, dispatch)
         })

@@ -1,6 +1,6 @@
 export interface IPagedFood {
     food: IFood[]
-    last_page: boolean
+    lastPage: boolean
 }
 
 export interface INewFood {
@@ -16,14 +16,14 @@ export type IFood = INewFood & {
 }
 
 export interface IUnitConversion {
-    unit_id: number
+    unitId: number
     ratio: number
 }
 
 export interface IPagedRecipes {
     recipes: IRecipe[]
     food: IFood[]
-    last_page: boolean
+    lastPage: boolean
 }
 
 export interface IAugmentedRecipe {
@@ -35,17 +35,17 @@ export interface INewRecipe {
     title: string
     serves?: number
     makes?: number
-    prep_time: number
-    cook_time: number
-    image_url: string
-    ingredient_sections: IIngredientSection[]
+    prepTime: number
+    cookTime: number
+    imageUrl: string
+    ingredientSections: IIngredientSection[]
     method: string[]
-    reference_url: string
+    referenceUrl: string
 }
 
 export type IRecipe = INewRecipe & {
     id: string
-    last_updated: number
+    lastUpdated: number
 }
 
 export interface IIngredientSection {
@@ -61,14 +61,14 @@ export enum IngredientType {
 }
 
 export interface IQuantifiedIngredient {
-    ingredient_type: IngredientType.Quantified
+    ingredientType: IngredientType.Quantified
     amount: number
-    unit_ids: number[]
-    food_id: string
-    additional_desc?: string
+    unitIds: number[]
+    foodId: string
+    additionalDesc?: string
 }
 
 export interface IFreeTextIngredient {
-    ingredient_type: IngredientType.FreeText
+    ingredientType: IngredientType.FreeText
     description: string
 }

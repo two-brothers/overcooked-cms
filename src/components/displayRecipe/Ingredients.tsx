@@ -22,8 +22,8 @@ class Ingredients extends SubComponent<IProps, IState> {
         this.setLocalState((state: IState) => {
             return {
                 keys: state.sections.map(section => ({
-                    ingredient_keys: section.ingredients.map(() => random()),
-                    section_key: random()
+                    ingredientKeys: section.ingredients.map(() => random()),
+                    sectionKey: random()
                 }))
             }
         })
@@ -45,7 +45,7 @@ class Ingredients extends SubComponent<IProps, IState> {
                     </Button>
                 </FlexView>
                 { sections.map((section, secIdx) => (
-                    <React.Fragment key={ keys[secIdx].section_key }>
+                    <React.Fragment key={ keys[secIdx].sectionKey }>
                         { secIdx > 0 ? <Divider /> : null }
                         <FlexView column={ true } grow={ true }>
                             <TextField label={ 'heading (optional)' }
@@ -57,7 +57,7 @@ class Ingredients extends SubComponent<IProps, IState> {
                                        margin={ 'normal' }
                             />
                             { section.ingredients.map((ing, ingIdx) => (
-                                <FlexView key={ keys[secIdx].ingredient_keys[ingIdx] }>
+                                <FlexView key={ keys[secIdx].ingredientKeys[ingIdx] }>
                                     <Ingredient state={ { ing } }
                                                 propagate={ this.updateIngredient(secIdx, ingIdx) }
                                                 authenticated={ authenticated }
@@ -108,7 +108,7 @@ class Ingredients extends SubComponent<IProps, IState> {
      */
     private newSection = () => {
         this.setLocalState((state: IState) => ({
-            keys: [...(state.keys ? state.keys : []), { section_key: random(), ingredient_keys: [] }]
+            keys: [...(state.keys ? state.keys : []), { sectionKey: random(), ingredientKeys: [] }]
         }))
         this.setState((state: IState) => ({
             sections: NestedUtility.appendToNestedArray(state, `sections`, { heading: '', ingredients: [] }).sections
@@ -136,19 +136,19 @@ class Ingredients extends SubComponent<IProps, IState> {
      */
     private newIngredient = (ingType: IngredientType, idx: number) => () => {
         this.setLocalState((state: IState) => {
-            return { keys: NestedUtility.appendToNestedArray(state, `keys[${ idx }].ingredient_keys`, random()).keys }
+            return { keys: NestedUtility.appendToNestedArray(state, `keys[${ idx }].ingredientKeys`, random()).keys }
         })
         const newIngredient = ingType === IngredientType.Quantified ?
             {
-                additional_desc: '',
+                additionalDesc: '',
                 amount: '',
-                food_id: '',
-                ingredient_type: ingType,
-                unit_ids: []
+                foodId: '',
+                ingredientType: ingType,
+                unitIds: []
             } :
             {
                 description: '',
-                ingredient_type: ingType
+                ingredientType: ingType
             }
         this.setState((state: IState) => ({
             sections: NestedUtility.appendToNestedArray(state, `sections[${ idx }].ingredients`, newIngredient).sections
@@ -179,7 +179,7 @@ class Ingredients extends SubComponent<IProps, IState> {
             sections: NestedUtility.removeFromNestedArray(state, `sections[${ secIdx }].ingredients`, ingIdx).sections
         }))
         this.setLocalState((state: IState) => ({
-            keys: NestedUtility.removeFromNestedArray(state, `keys[${ secIdx }].ingredient_keys`, ingIdx).keys
+            keys: NestedUtility.removeFromNestedArray(state, `keys[${ secIdx }].ingredientKeys`, ingIdx).keys
         }))
     }
 }
@@ -190,8 +190,8 @@ export interface IState {
 }
 
 interface ISectionKeys {
-    section_key: number,
-    ingredient_keys: number[]
+    sectionKey: number,
+    ingredientKeys: number[]
 }
 
 const random = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)

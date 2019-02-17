@@ -38,11 +38,11 @@ class Container extends Component<IProps> {
                 <AppBar />
                 <BrowserRouter>
                     <Switch>
-                        <Route exact={ true } path={ `${ base }/` } component={ Home } />
                         <Route exact={ true } path={ `${ base }/food/new` } component={ FoodRecord } />
                         <Route exact={ true } path={ `${ base }/food/:id?` } component={ FoodRecord } />
                         <Route exact={ true } path={ `${ base }/recipe/new` } component={ RecipeRecord } />
                         <Route exact={ true } path={ `${ base }/recipe/:id?` } component={ RecipeRecord } />
+                        <Route path={ `${ base }/` } component={ Home } />
                     </Switch>
                 </BrowserRouter>
             </div>

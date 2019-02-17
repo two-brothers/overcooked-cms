@@ -113,8 +113,8 @@ class FoodRecord extends Component<IProps> {
             const food = this.props.food[id]
             if (food) {
                 food.conversions.map(conv => {
-                    selections[conv.unit_id].selected = true
-                    selections[conv.unit_id].quantity = conv.ratio
+                    selections[conv.unitId].selected = true
+                    selections[conv.unitId].quantity = conv.ratio
                 })
                 state.singular = food.name.singular
                 state.plural = food.name.plural
@@ -137,11 +137,11 @@ class FoodRecord extends Component<IProps> {
         const { id, singular, plural, selections } = this.state
 
         const newItem: INewFood = {
-            conversions: selections.map((_, unitID) => unitID)
-                .filter(unitID => selections[unitID].selected)
-                .map(unitID => ({
-                    ratio: Number(selections[unitID].quantity),
-                    unit_id: unitID
+            conversions: selections.map((_, unitId) => unitId)
+                .filter(unitId => selections[unitId].selected)
+                .map(unitId => ({
+                    ratio: Number(selections[unitId].quantity),
+                    unitId
                 })),
             name: { plural, singular }
         }

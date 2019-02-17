@@ -22,7 +22,7 @@ const initFoodPage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>)
                 type: ActionNames.REPLACE_ITEMS
             })
 
-            return res.last_page ? Promise.resolve(undefined) : initFoodPage(page + 1, dispatch)
+            return res.lastPage ? Promise.resolve(undefined) : initFoodPage(page + 1, dispatch)
         })
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined)

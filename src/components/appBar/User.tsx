@@ -12,6 +12,7 @@ import { logOut } from '../../reducers/user/actions'
 class User extends Component<IProps> {
     public render(): JSX.Element {
         const profile = this.props.profile
+        const version = '/v1'
         return (
             <div>
                 { profile ?
@@ -20,7 +21,7 @@ class User extends Component<IProps> {
                         <Button onClick={ this.logOut } color='inherit'>Sign Out</Button>
                     </div>
                     :
-                    <a href={ '/auth/github' }>Sign In</a>
+                    <a href={ `${ version }/auth/github` }>Sign In</a>
                 }
             </div>
         )

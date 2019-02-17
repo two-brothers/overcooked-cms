@@ -38,7 +38,7 @@ class RecipeRecord extends Component<IProps> {
     }
 
     public render(): JSX.Element {
-        const { cook_time, id, image_url, ingredient_sections, last_updated, method, prep_time, produces, reference_url, status, servesSelected, title } = this.state
+        const { cookTime, id, imageUrl, ingredientSections, lastUpdated, method, prepTime, produces, referenceUrl, status, servesSelected, title } = this.state
         const { authenticated } = this.props
         const action = id ? 'update' : 'create'
 
@@ -70,21 +70,21 @@ class RecipeRecord extends Component<IProps> {
                             />
 
                             <InputField label={ 'preparation time (mins)' }
-                                        value={ prep_time }
-                                        onChange={ this.onInputChange('prep_time') }
+                                        value={ prepTime }
+                                        onChange={ this.onInputChange('prepTime') }
                                         type={ 'number' }
                                         inputProps={ { readOnly: !authenticated, min: 1 } }
                             />
 
                             <InputField label={ 'cooking time (mins)' }
-                                        value={ cook_time }
-                                        onChange={ this.onInputChange('cook_time') }
+                                        value={ cookTime }
+                                        onChange={ this.onInputChange('cookTime') }
                                         type={ 'number' }
                                         inputProps={ { readOnly: !authenticated, min: 1 } }
                             />
 
                             <Compress heading={ 'Ingredients' }>
-                                <Ingredients state={ { sections: ingredient_sections } }
+                                <Ingredients state={ { sections: ingredientSections } }
                                              propagate={ this.updateIngredients }
                                              authenticated={ authenticated }
                                 />
@@ -98,20 +98,20 @@ class RecipeRecord extends Component<IProps> {
                             </Compress>
 
                             <InputField label={ 'reference url' }
-                                        value={ reference_url }
-                                        onChange={ this.onInputChange('reference_url') }
+                                        value={ referenceUrl }
+                                        onChange={ this.onInputChange('referenceUrl') }
                                         inputProps={ { readOnly: !authenticated } }
                             />
 
                             <InputField label={ 'image url' }
-                                        value={ image_url }
-                                        onChange={ this.onInputChange('image_url') }
+                                        value={ imageUrl }
+                                        onChange={ this.onInputChange('imageUrl') }
                                         inputProps={ { readOnly: !authenticated } }
                             />
 
-                            { last_updated ?
+                            { lastUpdated ?
                                 <InputField label={ 'last updated' }
-                                            value={ (new Date(last_updated)).toLocaleString() }
+                                            value={ (new Date(lastUpdated)).toLocaleString() }
                                             inputProps={ { readOnly: true } }
                                 /> :
                                 null
@@ -147,14 +147,14 @@ class RecipeRecord extends Component<IProps> {
         const id = this.props.match.params.id
 
         let state: IState = {
-            cook_time: 1,
+            cookTime: 1,
             id,
-            image_url: '',
-            ingredient_sections: [],
+            imageUrl: '',
+            ingredientSections: [],
             method: [],
-            prep_time: 1,
+            prepTime: 1,
             produces: 1,
-            reference_url: '',
+            referenceUrl: '',
             servesSelected: true,
             status: RetrievalStatus.AVAILABLE,
             title: ''
@@ -168,7 +168,7 @@ class RecipeRecord extends Component<IProps> {
                 state.servesSelected = (recipe.serves !== undefined)
                 state.produces = (state.servesSelected ? recipe.serves : recipe.makes) as number
                 // every heading should be defined (so it can be controlled by react)
-                state.ingredient_sections.map(section => {
+                state.ingredientSections.map(section => {
                     section.heading = section.heading ? section.heading : ''
                 })
             } else {
@@ -187,20 +187,20 @@ class RecipeRecord extends Component<IProps> {
      */
     private onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const { title, servesSelected, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url, id } = this.state
+        const { title, servesSelected, produces, prepTime, cookTime, ingredientSections, method, referenceUrl, imageUrl, id } = this.state
         const { recipes } = this.props
-        // for ui reasons, ingredient_sections has strings instead of numbers, and empty strings instead of undefined properties
+        // for ui reasons, ingredientSections has strings instead of numbers, and empty strings instead of undefined properties
         // fix that before submission
-        const sections: IIngredientSection[] = ingredient_sections.map(section =>
+        const sections: IIngredientSection[] = ingredientSections.map(section =>
             Object.assign(
                 {
                     ingredients: section.ingredients.map(ingredient =>
-                        ingredient.ingredient_type === IngredientType.Quantified ?
+                        ingredient.ingredientType === IngredientType.Quantified ?
                             Object.assign(
-                                { ingredient_type: ingredient.ingredient_type, food_id: ingredient.food_id },
+                                { ingredientType: ingredient.ingredientType, foodId: ingredient.foodId },
                                 { amount: Number(ingredient.amount) },
-                                { unit_ids: ingredient.unit_ids.map(unitID => Number(unitID)) },
-                                ingredient.additional_desc ? { additional_desc: ingredient.additional_desc } : {}
+                                { unitIds: ingredient.unitIds.map(unitId => Number(unitId)) },
+                                ingredient.additionalDesc ? { additionalDesc: ingredient.additionalDesc } : {}
                             ) :
                             ingredient
                     )
@@ -210,9 +210,9 @@ class RecipeRecord extends Component<IProps> {
         )
 
         const newRecipe: INewRecipe = Object.assign({},
-            { title, reference_url, image_url, method },
+            { title, referenceUrl, imageUrl, method },
             { [servesSelected ? 'serves' : 'makes']: Number(produces) },
-            { 'prep_time': Number(prep_time), 'cook_time': Number(cook_time), 'ingredient_sections': sections }
+            { 'prepTime': Number(prepTime), 'cookTime': Number(cookTime), 'ingredientSections': sections }
         )
 
         if (id) {
@@ -249,8 +249,8 @@ class RecipeRecord extends Component<IProps> {
      */
     private updateIngredients = (updateFn: (ingState: IIngsState) => Partial<IIngsState>) =>
         this.setState((state: IState) => {
-            const update = updateFn({ sections: state.ingredient_sections })
-            return update.sections ? { ingredient_sections: update.sections } : {}
+            const update = updateFn({ sections: state.ingredientSections })
+            return update.sections ? { ingredientSections: update.sections } : {}
         })
 
     /**
@@ -268,24 +268,24 @@ class RecipeRecord extends Component<IProps> {
      * Returns a boolean indicating whether the component describes a valid recipe
      */
     private valid = () => {
-        const { title, produces, prep_time, cook_time, ingredient_sections, method, reference_url, image_url } = this.state
+        const { title, produces, prepTime, cookTime, ingredientSections, method, referenceUrl, imageUrl } = this.state
         const validTitle = title && title.trim().length > 0
         const validQuantities =
             Number.isInteger(Number(produces)) && Number(produces) > 0 &&
-            Number.isInteger(Number(prep_time)) && Number(prep_time) > 0 &&
-            Number.isInteger(Number(cook_time)) && Number(cook_time) > 0
+            Number.isInteger(Number(prepTime)) && Number(prepTime) > 0 &&
+            Number.isInteger(Number(cookTime)) && Number(cookTime) > 0
         const validIngredientSections =
-            ingredient_sections.length > 0 &&
-            ingredient_sections.reduce((allSectionsAreValid, section) =>
+            ingredientSections.length > 0 &&
+            ingredientSections.reduce((allSectionsAreValid, section) =>
                 allSectionsAreValid &&
                 // we don't need to check the heading - it is valid in all circumstances
                 section.ingredients.reduce((allIngredientsAreValid, ingredient) =>
                     allIngredientsAreValid && (
                         (
-                            ingredient.ingredient_type === IngredientType.Quantified &&
+                            ingredient.ingredientType === IngredientType.Quantified &&
                             Number(ingredient.amount) > 0 &&
-                            ingredient.unit_ids.length > 0 &&
-                            ingredient.unit_ids.reduce((allUnitIdsAreValid, unitID) =>
+                            ingredient.unitIds.length > 0 &&
+                            ingredient.unitIds.reduce((allUnitIdsAreValid, unitID) =>
                                 allUnitIdsAreValid &&
                                 Number.isInteger(Number(unitID)) &&
                                 Number(unitID) >= 0 &&
@@ -293,11 +293,11 @@ class RecipeRecord extends Component<IProps> {
                                 true) &&
                             // this component cannot confirm that the food id corresponds to a real food item
                             // the UI should enforce it.
-                            ingredient.food_id.trim().length > 0
-                            // we don't need to check the additional_desc - it is valid in all circumstances
+                            ingredient.foodId.trim().length > 0
+                            // we don't need to check the additionalDesc - it is valid in all circumstances
                         ) ||
                         (
-                            ingredient.ingredient_type === IngredientType.FreeText &&
+                            ingredient.ingredientType === IngredientType.FreeText &&
                             ingredient.description.trim().length > 0
                         )
                     ),
@@ -306,7 +306,7 @@ class RecipeRecord extends Component<IProps> {
         const validMethod =
             method.length > 0 &&
             method.reduce((allStepsAreValid, step) => step.trim().length > 0, true)
-        const validUrls = reference_url.trim().length > 0 && image_url.trim().length > 0
+        const validUrls = referenceUrl.trim().length > 0 && imageUrl.trim().length > 0
 
         return validTitle && validQuantities && validIngredientSections && validMethod && validUrls
     }
@@ -356,15 +356,15 @@ enum RetrievalStatus {
 }
 
 interface IState {
-    cook_time: number
+    cookTime: number
     id: string | null
-    image_url: string
-    ingredient_sections: IIngredientSection[]
-    last_updated?: number
+    imageUrl: string
+    ingredientSections: IIngredientSection[]
+    lastUpdated?: number
     method: string[]
-    prep_time: number
+    prepTime: number
     produces: number
-    reference_url: string
+    referenceUrl: string
     servesSelected: boolean
     title: string
     status: RetrievalStatus

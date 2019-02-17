@@ -66,11 +66,11 @@ class DisplayFood extends Component<IProps> {
         return (
             <span>
                 { food.conversions.map(conv => {
-                    const unit = units[conv.unit_id]
+                    const unit = units[conv.unitId]
                     const singular = `${ unit.singular } ${ food.name.singular }`
                     const plural = `${ unit.plural } ${ food.name.plural }`
                     return (
-                        <span key={ conv.unit_id }>{ conv.ratio }{ conv.ratio === 1 ? singular : plural }<br /></span>)
+                        <span key={ conv.unitId }>{ conv.ratio }{ conv.ratio === 1 ? singular : plural }<br /></span>)
                 }) }
             </span>
         )

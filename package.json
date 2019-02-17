@@ -28,13 +28,7 @@
     "upload": "scripts/upload.sh"
   },
   "proxy": {
-    "^/auth": {
-      "target": "http://localhost:5000"
-    },
-    "^/food": {
-      "target": "http://localhost:5000"
-    },
-    "^/recipes": {
+    "^/v1": {
       "target": "http://localhost:5000"
     }
   },

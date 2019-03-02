@@ -34,9 +34,9 @@ class Container extends Component<IProps> {
         const base = process.env.PUBLIC_URL
 
         return (
-            <div>
-                <AppBar />
-                <BrowserRouter>
+            <BrowserRouter>
+                <React.Fragment>
+                    <AppBar />
                     <Switch>
                         <Route exact={ true } path={ `${ base }/food/new` } component={ FoodRecord } />
                         <Route exact={ true } path={ `${ base }/food/:id?` } component={ FoodRecord } />
@@ -44,8 +44,8 @@ class Container extends Component<IProps> {
                         <Route exact={ true } path={ `${ base }/recipe/:id?` } component={ RecipeRecord } />
                         <Route path={ `${ base }/` } component={ Home } />
                     </Switch>
-                </BrowserRouter>
-            </div>
+                </React.Fragment>
+            </BrowserRouter>
         )
     }
 }

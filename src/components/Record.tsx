@@ -66,17 +66,15 @@ class Record<T> extends Component<IProps<T>> {
                         <form onSubmit={ this.onSubmit }>
                             { children }
                             { authenticated ?
-                                <React.Fragment>
-                                    <Button type={ 'submit' }
-                                            disabled={ !valid() }
-                                            color={ 'primary' }>
-                                        { action.toUpperCase() }
-                                    </Button>
-                                    { id && <DeleteRecord id={ id } onDelete={ this.deleteRecord(id) } /> }
-                                </React.Fragment> :
+                                <Button type={ 'submit' }
+                                        disabled={ !valid() }
+                                        color={ 'primary' }>
+                                    { action.toUpperCase() }
+                                </Button> :
                                 <p>{ `Please sign in to ${ action } the record` }</p>
                             }
                         </form>
+                        { authenticated && id && <DeleteRecord id={ id } onDelete={ this.deleteRecord(id) } /> }
                     </Typography>
                 )
             default:

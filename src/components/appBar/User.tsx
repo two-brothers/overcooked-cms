@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core'
+import { Button, withStyles } from '@material-ui/core'
 import * as React from 'react'
 import { Component } from 'react'
 import { connect } from 'react-redux'
@@ -11,19 +11,22 @@ import { logOut } from '../../reducers/user/actions'
  */
 class User extends Component<IProps> {
     public render(): JSX.Element {
-        const profile = this.props.profile
+        const { profile, classes } = this.props
         const version = '/v1'
         return (
-            <div>
-                { profile ?
-                    <div>
-                        <span>{ profile }</span>
-                        <Button onClick={ this.logOut } color='inherit'>Sign Out</Button>
-                    </div>
-                    :
-                    <a href={ `${ version }/auth/github` }>Sign In</a>
-                }
-            </div>
+            profile ?
+                <div>
+                    <span>{ profile }</span>
+                    <Button onClick={ this.logOut } className={ classes.inheritColor }>
+                        Sign Out
+                    </Button>
+                </div>
+                :
+                <a href={ `${ version }/auth/github` } className={ classes.unstyledLink }>
+                    <Button className={ classes.inheritColor }>
+                        Sign In
+                    </Button>
+                </a>
         )
     }
 
@@ -33,13 +36,24 @@ class User extends Component<IProps> {
     private logOut = () => this.props.logOut().catch(() => null)
 }
 
+const styles = () => ({
+    inheritColor: {
+        'color': 'inherit'
+    },
+    unstyledLink: {
+        'color': 'unset',
+        'text-decoration': 'none'
+    }
+})
+
 interface IProps {
-    profile: string
+    classes: any
     logOut: () => Promise<undefined>
+    profile: string
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
     profile: state.user.profile
 })
 
-export default connect(mapStateToProps, { logOut })(User)
+export default connect(mapStateToProps, { logOut })(withStyles(styles)(User))

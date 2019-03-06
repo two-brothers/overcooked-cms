@@ -61,16 +61,19 @@ export const getRecipe = (id: string) => (dispatch: Dispatch<ReplaceItems | Repl
 /**
  * Send the item to the server for creation, and dispatch REPLACE_ITEMS when the new record is returned
  * Dispatch an error for any unexpected server response.
+ * Return the new recipe id
  * @param item the new recipe item. This function does not validate the structure of the recipe
  */
 export const createRecipe = (item: INewRecipe) => (dispatch: Dispatch<ReplaceItems | AddError>) =>
     Server.createRecipe(item)
-        .then(res => dispatch({
-            items: [res],
-            type: ActionNames.REPLACE_ITEMS
-        }))
+        .then(res => {
+            dispatch({
+                items: [res],
+                type: ActionNames.REPLACE_ITEMS
+            })
+            return res.id
+        })
         .catch(err => recordError(err)(dispatch))
-        .then(() => undefined)
 
 /**
  * Request that the specified recipe be deleted from the server, and dispatch REMOVE_ITEM if successful.

@@ -27,11 +27,16 @@ class RecipeRecord extends Component<IProps> {
     public state: IState = this.initState()
 
     /**
-     * Whenever the recipe is changed in the redux store, update the state accordingly
+     * Whenever the recipe is changed in the redux store or the location changes,
+     * update the state accordingly
      */
     public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<{}>): void {
         const id = this.props.match.params.id
-        if (id && (this.props.recipes[id] !== prevProps.recipes[id])) {
+        const recipeChanged = id && (this.props.recipes[id] !== prevProps.recipes[id])
+        // this could happen when we navigate from the new recipe to update recipe pages
+        // since the Router loads the RecipeRecord component either way, it does not reload the component
+        const locationChanged = id !== prevProps.match.params.id
+        if (recipeChanged || locationChanged) {
             this.setState(() => this.initState())
         }
     }
@@ -48,6 +53,7 @@ class RecipeRecord extends Component<IProps> {
                     valid={ this.valid }
                     produceRecord={ this.produceRecipe }
                     createRecord={ this.props.createRecipe }
+                    onCreation={ this.routeToRecipe }
                     updateRecord={ this.props.updateRecipe }
                     deleteRecord={ this.props.deleteRecipe }>
                 <InputField label={ 'title' }
@@ -270,6 +276,15 @@ class RecipeRecord extends Component<IProps> {
 
         return validTitle && validQuantities && validIngredientSections && validMethod && validUrls
     }
+
+    /**
+     * Route to the newly created recipe page
+     * @param id the recipe id
+     */
+    private routeToRecipe = (id: string) => {
+        const { history } = this.props
+        history.push(`${ process.env.PUBLIC_URL }/recipe/${ id }`)
+    }
 }
 
 /**
@@ -319,7 +334,7 @@ interface IState {
 type IProps = RouteComponentProps<{ id: string }> & {
     authenticated: boolean
     recipes: IRecipeState
-    createRecipe: (item: INewRecipe) => Promise<undefined>
+    createRecipe: (item: INewRecipe) => Promise<string>
     deleteRecipe: (id: string) => Promise<undefined>
     getRecipe: (id: string) => Promise<undefined>
     updateRecipe: (id: string, item: Partial<INewRecipe>) => Promise<undefined>

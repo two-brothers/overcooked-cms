@@ -21,7 +21,9 @@ interface IPassedProps<T> {
     // a function to take the contents of the form and produce the corresponding record object
     produceRecord: () => T
     // a function to create a new record on the server
-    createRecord: (record: T) => Promise<undefined>;
+    createRecord: (record: T) => Promise<string | undefined>;
+    // a function to call once the record is created
+    onCreation?: (id?: string) => void
     // a function to send a partial record to the server for updating
     updateRecord: (id: string, update: Partial<T>) => Promise<undefined>
     // a function to delete a record on the server
@@ -101,7 +103,7 @@ class Record<T> extends Component<IProps<T>> {
      */
     private onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const { id, records, produceRecord, createRecord, updateRecord } = this.props
+        const { id, records, produceRecord, createRecord, updateRecord, onCreation } = this.props
         const newRecord: T = produceRecord()
 
         if (id) {
@@ -112,6 +114,7 @@ class Record<T> extends Component<IProps<T>> {
             }
         } else {
             createRecord(newRecord)
+                .then(newId => onCreation && onCreation(newId))
                 .catch(() => null)
         }
     }

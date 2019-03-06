@@ -40,6 +40,7 @@ class FoodRecord extends Component<IProps> {
                     valid={ this.valid }
                     produceRecord={ this.produceFoodItem }
                     createRecord={ this.props.createFood }
+                    onCreation={ this.routeToHome }
                     updateRecord={ this.props.updateFood }
                     deleteRecord={ this.props.deleteFood }>
                 <TextField label={ 'singular' }
@@ -145,6 +146,14 @@ class FoodRecord extends Component<IProps> {
             plural.length > 0 &&
             selections.filter(unit => unit.selected).length > 0 &&
             selections.filter(unit => unit.selected && Number(unit.quantity) <= 0).length === 0
+    }
+
+    /**
+     * Route to the home page
+     */
+    private routeToHome = () => {
+        const { history } = this.props
+        history.push(`${process.env.PUBLIC_URL}`)
     }
 }
 

@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 
 import { IGlobalState } from '../reducers'
 import DeleteRecord from './DeleteRecord'
+import Overlay from './Overlay'
 import { Utility } from './utility'
 
 interface IPassedProps<T> {
@@ -39,6 +40,7 @@ interface IPassedProps<T> {
 class Record<T> extends Component<IProps<T>> {
 
     public state: IState = {
+        pendingAction: false,
         retrieving: this.props.id !== undefined
     }
 
@@ -56,6 +58,7 @@ class Record<T> extends Component<IProps<T>> {
 
     public render(): JSX.Element {
         const { id, title, children, authenticated, valid } = this.props
+        const { pendingAction } = this.state
         const action = id ? 'update' : 'create'
         switch (this.getStatus()) {
             case RetrievalStatus.RETRIEVING:
@@ -65,6 +68,7 @@ class Record<T> extends Component<IProps<T>> {
             case RetrievalStatus.AVAILABLE:
                 return (
                     <Typography component={ 'div' }>
+                        <Overlay active={ pendingAction } />
                         <h2>{ title }{ id && ` ( ${ id } )` }</h2>
                         <form onSubmit={ this.onSubmit }>
                             { children }
@@ -110,13 +114,21 @@ class Record<T> extends Component<IProps<T>> {
         if (id) {
             const update = Utility.subtract(Object(newRecord), Object(records[id]))
             if (Object.getOwnPropertyNames(update).length > 0) {
+                this.setPendingAction()
                 updateRecord(id, newRecord)
                     .catch(() => null)
+                    .then(() => this.clearPendingAction())
+
             }
         } else {
+            this.setPendingAction()
             createRecord(newRecord)
-                .then(newId => onCreation && onCreation(newId))
                 .catch(() => null)
+                .then(newId => {
+                    this.clearPendingAction()
+                    return newId
+                })
+                .then(newId => (newId !== null) && onCreation && onCreation(newId))
         }
     }
 
@@ -126,11 +138,23 @@ class Record<T> extends Component<IProps<T>> {
      * This function simply adds a layer of indirection to get the call signatures to match
      * and then calls the onDelete callback if it is defined
      */
-    private deleteRecord = (id: string) => () =>
+    private deleteRecord = (id: string) => () => {
+        this.setPendingAction()
         this.props.deleteRecord(id)
-            .then(() => this.props.onDelete && this.props.onDelete())
             .catch(() => null)
+            .then(() => this.clearPendingAction())
+            .then(() => this.props.onDelete && this.props.onDelete())
+    }
 
+    /**
+     * Set the pendingAction flag
+     */
+    private setPendingAction = () => this.setState(() => ({ pendingAction: true }))
+
+    /**
+     * Clear the pendingAction flag
+     */
+    private clearPendingAction = () => this.setState(() => ({ pendingAction: false }))
 }
 
 enum RetrievalStatus {
@@ -145,6 +169,7 @@ type IProps<T> = IPassedProps<T> & {
 
 interface IState {
     retrieving: boolean;
+    pendingAction: boolean;
 }
 
 const mapStateToProps = (state: IGlobalState) => ({

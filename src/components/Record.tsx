@@ -29,6 +29,7 @@ interface IPassedProps<T> {
     // a function to delete a record on the server
     deleteRecord: (id: string) => Promise<undefined>
     // a function the indicates whether the record is valid
+    onDelete?: () => void
     valid: () => boolean;
 }
 
@@ -123,8 +124,12 @@ class Record<T> extends Component<IProps<T>> {
      * The DeleteRecord component expects a function with no arguments, but we need to call
      * this.props.deleteRecord with the recipe id.
      * This function simply adds a layer of indirection to get the call signatures to match
+     * and then calls the onDelete callback if it is defined
      */
-    private deleteRecord = (id: string) => () => this.props.deleteRecord(id).catch(() => null)
+    private deleteRecord = (id: string) => () =>
+        this.props.deleteRecord(id)
+            .then(() => this.props.onDelete && this.props.onDelete())
+            .catch(() => null)
 
 }
 

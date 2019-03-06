@@ -55,7 +55,8 @@ class RecipeRecord extends Component<IProps> {
                     createRecord={ this.props.createRecipe }
                     onCreation={ this.routeToRecipe }
                     updateRecord={ this.props.updateRecipe }
-                    deleteRecord={ this.props.deleteRecipe }>
+                    deleteRecord={ this.props.deleteRecipe }
+                    onDelete={ this.routeToHome }>
                 <InputField label={ 'title' }
                             value={ title }
                             onChange={ this.onInputChange('title') }
@@ -284,6 +285,14 @@ class RecipeRecord extends Component<IProps> {
     private routeToRecipe = (id: string) => {
         const { history } = this.props
         history.push(`${ process.env.PUBLIC_URL }/recipe/${ id }`)
+    }
+
+    /**
+     * Route to the home page
+     */
+    private routeToHome = () => {
+        const { history } = this.props
+        history.push(`${ process.env.PUBLIC_URL }`)
     }
 }
 

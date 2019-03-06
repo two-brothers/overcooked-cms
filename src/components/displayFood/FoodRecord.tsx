@@ -42,7 +42,8 @@ class FoodRecord extends Component<IProps> {
                     createRecord={ this.props.createFood }
                     onCreation={ this.routeToHome }
                     updateRecord={ this.props.updateFood }
-                    deleteRecord={ this.props.deleteFood }>
+                    deleteRecord={ this.props.deleteFood }
+                    onDelete={ this.routeToHome }>
                 <TextField label={ 'singular' }
                            value={ singular }
                            onChange={ this.onInputChange('singular') }
@@ -153,7 +154,7 @@ class FoodRecord extends Component<IProps> {
      */
     private routeToHome = () => {
         const { history } = this.props
-        history.push(`${process.env.PUBLIC_URL}`)
+        history.push(`${ process.env.PUBLIC_URL }`)
     }
 }
 

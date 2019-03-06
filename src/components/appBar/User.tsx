@@ -1,4 +1,6 @@
-import { Button, withStyles } from '@material-ui/core'
+import { IconButton, withStyles } from '@material-ui/core'
+import Person from '@material-ui/icons/Person';
+import PersonOutlined from '@material-ui/icons/PersonOutlined';
 import * as React from 'react'
 import { Component } from 'react'
 import { connect } from 'react-redux'
@@ -17,15 +19,15 @@ class User extends Component<IProps> {
             profile ?
                 <div>
                     <span>{ profile }</span>
-                    <Button onClick={ this.logOut } className={ classes.inheritColor }>
-                        Sign Out
-                    </Button>
+                    <IconButton onClick={ this.logOut } className={ classes.inheritColor }>
+                        <Person/>
+                    </IconButton>
                 </div>
                 :
                 <a href={ `${ version }/auth/github` } className={ classes.unstyledLink }>
-                    <Button className={ classes.inheritColor }>
-                        Sign In
-                    </Button>
+                    <IconButton className={ classes.inheritColor }>
+                        <PersonOutlined/>
+                    </IconButton>
                 </a>
         )
     }

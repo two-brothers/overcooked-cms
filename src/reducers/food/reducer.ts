@@ -17,11 +17,7 @@ export interface IState {
 export default function (state = initialState, action: Action) {
     switch (action.type) {
         case ActionNames.REPLACE_ITEMS:
-            const updates = {}
-            action.items.map(item => {
-                updates[item.id] = item
-            })
-            return Object.assign({}, state, updates)
+            return Object.assign({}, state, action.items)
         case ActionNames.REMOVE_ITEM:
             const updated = Object.assign({}, state)
             delete updated[action.id]

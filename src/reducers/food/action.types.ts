@@ -5,7 +5,7 @@ import { IFood, INewFood } from '../../server/interfaces'
  * Add new food items to the state, and replace existing ones with the updated value
  */
 export type ReplaceItems = BaseAction<ActionNames.REPLACE_ITEMS> & {
-    items: IFood[]
+    items: { [id: string]: IFood }
 }
 
 /**

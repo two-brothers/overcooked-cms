@@ -22,13 +22,13 @@ export interface IUnitConversion {
 
 export interface IPagedRecipes {
     recipes: IRecipe[]
-    food: IFood[]
+    food: { [id: string]: IFood }
     lastPage: boolean
 }
 
 export interface IAugmentedRecipe {
     recipe: IRecipe
-    food: IFood[]
+    food: { [id: string]: IFood }
 }
 
 export interface INewRecipe {

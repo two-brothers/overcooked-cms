@@ -18,7 +18,7 @@ const initFoodPage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>)
     Server.getFoodPage(page)
         .then(res => {
             dispatch({
-                items: res.food,
+                items: res.food.reduce((obj, item) => ({...obj, [item.id]: item}), {}),
                 type: ActionNames.REPLACE_ITEMS
             })
 
@@ -37,7 +37,7 @@ export const getFood = (id: string) => (dispatch: Dispatch<ReplaceItems | AddErr
         Promise.resolve(undefined) : // if the item already exists in the store, don't fetch it
         Server.getFood(id)
             .then(res => dispatch({
-                items: [res],
+                items: { [res.id]: res},
                 type: ActionNames.REPLACE_ITEMS
             }))
             .catch(err => recordError(err)(dispatch))
@@ -51,7 +51,7 @@ export const getFood = (id: string) => (dispatch: Dispatch<ReplaceItems | AddErr
 export const createFood = (item: INewFood) => (dispatch: Dispatch<ReplaceItems | AddError>) =>
     Server.createFood(item)
         .then(res => dispatch({
-            items: [res],
+            items: { [res.id]: res},
             type: ActionNames.REPLACE_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))

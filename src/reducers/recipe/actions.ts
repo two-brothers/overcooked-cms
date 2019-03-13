@@ -5,7 +5,7 @@ import { AddError } from '../errors/action.types'
 import { recordError } from '../errors/actions'
 import { ActionNames as FoodActionNames, ReplaceItems as ReplaceFoodItems } from '../food/action.types'
 import { IGlobalState } from '../index'
-import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types'
+import { ActionNames, RemoveItem, ReplaceItems } from './action.types'
 
 /**
  * Retrieve all the recipe items, one page at a time, and dispatch REPLACE_ITEMS (on the food and recipes)
@@ -36,9 +36,9 @@ const initRecipePage = (page: number, dispatch: Dispatch<ReplaceItems | ReplaceF
         .then(() => undefined)
 
 /**
- * Retrieve the specified recipe and dispatch UPDATE_ITEMS when the record is returned.
+ * Retrieve the specified recipe and associated food items and dispatch REPLACE_ITEMS when the records are returned.
  * Dispatch an error for any unexpected server response.
- * @param id the id of the food item
+ * @param id the id of the recipe item
  */
 export const getRecipe = (id: string) => (dispatch: Dispatch<ReplaceItems | ReplaceFoodItems | AddError>, getState: () => IGlobalState) =>
     getState().recipes[id] ?
@@ -95,12 +95,11 @@ export const deleteRecipe = (id: string) => (dispatch: Dispatch<RemoveItem | Add
  * @param id the id of the recipe to be updated
  * @param update the new properties to apply to the recipe
  */
-export const updateRecipe = (id: string, update: Partial<INewRecipe>) => (dispatch: Dispatch<UpdateItem | AddError>) =>
+export const updateRecipe = (id: string, update: Partial<INewRecipe>) => (dispatch: Dispatch<ReplaceItems | AddError>) =>
     Server.updateRecipe(id, update)
-        .then(() => dispatch({
-            id,
-            type: ActionNames.UPDATE_ITEM,
-            update
+        .then(res => dispatch({
+            items: [res],
+            type: ActionNames.REPLACE_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined)

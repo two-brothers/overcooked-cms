@@ -5,10 +5,10 @@ import Server from '../../server/server'
 import { AddError } from '../errors/action.types'
 import { recordError } from '../errors/actions'
 import { IGlobalState } from '../index'
-import { ActionNames, RemoveItem, ReplaceItems, UpdateItem } from './action.types'
+import { ActionNames, RemoveItem, ReplaceItems } from './action.types'
 
 /**
- * Retrieve all the food items, one page at a time, and dispatch UPDATE_ITEMS as each page is retrieved.
+ * Retrieve all the food items, one page at a time, and dispatch REPLACE_ITEMS as each page is retrieved.
  * Dispatch an error for any unexpected server response.
  */
 export const initFood = () => (dispatch: Dispatch<ReplaceItems | AddError>) =>
@@ -28,7 +28,7 @@ const initFoodPage = (page: number, dispatch: Dispatch<ReplaceItems | AddError>)
         .then(() => undefined)
 
 /**
- * Retrieve the specified food item and dispatch UPDATE_ITEMS when the record is returned.
+ * Retrieve the specified food item and dispatch REPLACE_ITEMS when the record is returned.
  * Dispatch an error for any unexpected server response.
  * @param id the id of the food item
  */
@@ -44,7 +44,7 @@ export const getFood = (id: string) => (dispatch: Dispatch<ReplaceItems | AddErr
             .then(() => undefined)
 
 /**
- * Send the item to the server for creation, and dispatch UPDATE_ITEMS when the new record is returned.
+ * Send the item to the server for creation, and dispatch REPLACE_ITEMS when the new record is returned.
  * Dispatch an error for any unexpected server response.
  * @param item the new food item. This function does not validate the structure of the item
  */
@@ -72,17 +72,16 @@ export const deleteFood = (id: string) => (dispatch: Dispatch<RemoveItem | AddEr
         .then(() => undefined)
 
 /**
- * Request that the specified food item be updated with the specified value, and dispatch UPDATE_ITEM if successful.
+ * Request that the specified food item be updated with the specified value, and dispatch REPLACE_ITEMS if successful.
  * Dispatch an error for any unexpected server response
  * @param id the id of the food item to be updated
  * @param update the new properties to apply to the food item
  */
-export const updateFood = (id: string, update: Partial<INewFood>) => (dispatch: Dispatch<UpdateItem | AddError>) =>
+export const updateFood = (id: string, update: Partial<INewFood>) => (dispatch: Dispatch<ReplaceItems | AddError>) =>
     Server.updateFood(id, update)
-        .then(() => dispatch({
-            id,
-            type: ActionNames.UPDATE_ITEM,
-            update
+        .then(res => dispatch({
+            items: { [res.id]: res},
+            type: ActionNames.REPLACE_ITEMS
         }))
         .catch(err => recordError(err)(dispatch))
         .then(() => undefined)

@@ -18,6 +18,7 @@ import { IState as IRecipeState } from '../../reducers/recipe/reducer'
 import { IIngredientSection, INewRecipe, IngredientType } from '../../server/interfaces'
 import Record from '../Record'
 import Ingredients, { IState as IIngsState } from './Ingredients'
+import RecipeImage, { IState as IImageState } from './RecipeImage'
 import RecipeMethod, { IState as IMethodState } from './RecipeMethod'
 
 /**
@@ -102,15 +103,16 @@ class RecipeRecord extends Component<IProps> {
                     />
                 </Compress>
 
+                <Compress heading={ 'Image' }>
+                    <RecipeImage state={ { imageUrl } }
+                                 propagate={ this.updateImageUrl }
+                                 authenticated={ authenticated }
+                    />
+                </Compress>
+
                 <InputField label={ 'reference url' }
                             value={ referenceUrl }
                             onChange={ this.onInputChange('referenceUrl') }
-                            inputProps={ { readOnly: !authenticated } }
-                />
-
-                <InputField label={ 'image url' }
-                            value={ imageUrl }
-                            onChange={ this.onInputChange('imageUrl') }
                             inputProps={ { readOnly: !authenticated } }
                 />
 
@@ -229,6 +231,17 @@ class RecipeRecord extends Component<IProps> {
         this.setState((state: IState) => {
             const update = updateFn({ steps: state.method })
             return update.steps ? { method: update.steps } : {}
+        })
+
+    /**
+     * Whenever the RecipeImage sub-component update its internal state,
+     * update this component's state accordingly
+     * @param updateFn the update function that was used to update the RecipeImage component's state
+     */
+    private updateImageUrl = (updateFn: (imageState: IImageState) => Partial<IImageState>) =>
+        this.setState((state: IState) => {
+            const update = updateFn({ imageUrl: state.imageUrl })
+            return update.imageUrl ? { imageUrl: update.imageUrl } : {}
         })
 
     /**

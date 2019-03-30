@@ -128,6 +128,18 @@ class Server {
             .catch(Server.useOriginalErrorMessage)
     }
 
+    /**
+     * Upload the specified file to the server. Return the relative download url
+     * @param file the file to upload
+     */
+    public static upload(file: Blob): Promise<string> {
+        const formData = new FormData()
+        formData.append('file', file)
+        return axios.post(`${ Server.version }/upload`, formData)
+            .then(res => res.data.data)
+            .catch(Server.useOriginalErrorMessage)
+    }
+
     private static version = '/v1'
 
     /**

@@ -28,6 +28,9 @@
     "upload": "scripts/upload.sh"
   },
   "proxy": {
+    "^/uploads": {
+      "target": "http://localhost:5000/cms"
+    },
     "^/v1": {
       "target": "http://localhost:5000"
     }
